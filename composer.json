@@ -1,0 +1,37 @@
+{
+    "name": "alpha/gocardless-enterprise",
+    "type": "library",
+    "description": "A php library for interfacing with the GoCardless Enterprise REST API. Please note this library is not for use with their standard API.",
+    "keywords": ["GoCardless", "Direct Debit"],
+    "homepage": "http://www.alphalend.com/",
+    "license": "MIT",
+
+    "authors": [
+        {
+            "name": "Paul Pamment",
+            "email": "paul@alphalend.com",
+            "homepage": "http://www.alphalend.com"
+        }
+    ],
+
+    "require": {
+        "php": ">=5.3.3",
+        "guzzle/guzzle": "dev-master"
+    },
+
+    "autoload": {
+        "psr-0": {
+            "GoCardless": ""
+        }
+    },
+
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*"
+    },
+
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0"
+        }
+    }
+}
