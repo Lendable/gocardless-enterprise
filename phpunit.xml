@@ -15,7 +15,7 @@
 
     <testsuites>
         <testsuite name="Project Test Suite">
-            <directory>Alpha/GoCardless/Tests</directory>
+            <directory>GoCardless/Enterprise/Tests</directory>
         </testsuite>
     </testsuites>
 
