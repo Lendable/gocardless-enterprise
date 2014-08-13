@@ -11,6 +11,7 @@ namespace GoCardless\Enterprise;
 
 use GoCardless\Enterprise\Exceptions\ApiException;
 use GoCardless\Enterprise\Model\BankAccount;
+use GoCardless\Enterprise\Model\Creditor;
 use GoCardless\Enterprise\Model\Customer;
 use GoCardless\Enterprise\Model\Mandate;
 use GoCardless\Enterprise\Model\Model;
@@ -46,6 +47,8 @@ class Client
     const ENDPOINT_MANDATE = "mandates";
 
     const ENDPOINT_PAYMENTS = "payments";
+
+    const ENDPOINT_CREDITORS = "creditors";
 
     /**
      * @param \Guzzle\Http\Client $client
@@ -149,7 +152,7 @@ class Client
     {
         $response = $this->post(self::ENDPOINT_PAYMENTS, $payment->toArray());
         $payment->fromArray($response);
-        return $response;
+        return $payment;
     }
 
     /**
@@ -165,6 +168,15 @@ class Client
         $payments = $this->responseToObjects(new Payment(), $response);
 
         return $payments;
+    }
+
+    public function listCreditors($limit = 50, $after = null, $before = null)
+    {
+        $parameters = array_filter(["after" => $after, "before" => $before, "limit" => $limit]);
+        $response = $this->get(self::ENDPOINT_CREDITORS, $parameters);
+        $creditors = $this->responseToObjects(new Creditor(), $response);
+
+        return $creditors;
     }
 
     /**

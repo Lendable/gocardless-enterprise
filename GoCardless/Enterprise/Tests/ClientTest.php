@@ -11,6 +11,7 @@ namespace GoCardless\Enterprise\Tests;
 
 use GoCardless\Enterprise\Client;
 use GoCardless\Enterprise\Model\BankAccount;
+use GoCardless\Enterprise\Model\Creditor;
 use GoCardless\Enterprise\Model\Customer;
 use GoCardless\Enterprise\Model\Mandate;
 use GoCardless\Enterprise\Model\Payment;
@@ -124,14 +125,43 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         return $mandate;
     }
 
+    public function testListCreditors()
+    {
+        $creditors = $this->getClient()->listCreditors();
+
+        $this->assertTrue(is_array($creditors));
+        foreach($creditors as $creditor)
+        {
+            $this->assertInstanceOf('GoCardless\Enterprise\Model\Creditor', $creditor);
+        }
+
+        $creditor = reset($creditors);
+
+        return $creditor;
+    }
+
     /**
      * @depends testListMandates
+     * @depends testListCreditors
      * @param Mandate $mandate
+     * @param Creditor $creditor
      */
-    public function testCreatePayment(Mandate $mandate)
+    public function testCreatePayment(Mandate $mandate, Creditor $creditor)
     {
         $payment = new Payment();
+        $payment->setAmount(10000);
+        $payment->setCurrency("GBP");
+        $payment->setDescription("test");
+        $payment->setMandate($mandate);
+        $payment->setCreditor($creditor);
 
+        $payment = $this->getClient()->createPayment($payment);
+
+        $this->assertNotNull($payment->getId());
+        $this->assertNotNull($payment->getCreatedAt());
+        $this->assertEquals("pending", $payment->getStatus());
+        $this->assertNotNull($payment->getTransactionFee());
+        $this->assertNotNull($payment->getCollectedAt());
     }
 
     public function testListPayments()
