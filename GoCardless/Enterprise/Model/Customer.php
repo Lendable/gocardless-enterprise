@@ -246,4 +246,22 @@ class Customer extends Model
     {
         return $this->region;
     }
+
+    /**
+     * @param array $bankAccounts
+     */
+    public function setBankAccounts($bankAccounts)
+    {
+        $this->bankAccounts = $bankAccounts;
+    }
+
+    /**
+     * @return array
+     */
+    public function getBankAccounts()
+    {
+        return $this->bankAccounts;
+    }
+
+
 } 

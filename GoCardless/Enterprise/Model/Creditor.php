@@ -52,12 +52,12 @@ class Creditor extends Model
     protected $country_code;
 
     /**
-     * @var BankAccount
+     * @var CreditorBankAccount
      */
     protected $gbp_payout_account;
 
     /**
-     * @var BankAccount
+     * @var CreditorBankAccount
      */
     protected $eur_payout_account;
 
@@ -142,7 +142,7 @@ class Creditor extends Model
     }
 
     /**
-     * @param \GoCardless\Enterprise\Model\BankAccount $eur_payout_account
+     * @param \GoCardless\Enterprise\Model\CreditorBankAccount $eur_payout_account
      */
     public function setEurPayoutAccount($eur_payout_account)
     {
@@ -150,7 +150,7 @@ class Creditor extends Model
     }
 
     /**
-     * @return \GoCardless\Enterprise\Model\BankAccount
+     * @return \GoCardless\Enterprise\Model\CreditorBankAccount
      */
     public function getEurPayoutAccount()
     {
@@ -158,7 +158,7 @@ class Creditor extends Model
     }
 
     /**
-     * @param \GoCardless\Enterprise\Model\BankAccount $gbp_payout_account
+     * @param \GoCardless\Enterprise\Model\CreditorBankAccount $gbp_payout_account
      */
     public function setGbpPayoutAccount($gbp_payout_account)
     {
@@ -166,7 +166,7 @@ class Creditor extends Model
     }
 
     /**
-     * @return \GoCardless\Enterprise\Model\BankAccount
+     * @return \GoCardless\Enterprise\Model\CreditorBankAccount
      */
     public function getGbpPayoutAccount()
     {

@@ -22,7 +22,7 @@ class Mandate extends Model
     protected $scheme;
 
     /**
-     * @var BankAccount
+     * @var CustomerBankAccount
      */
     protected $bankAccount;
 
@@ -38,30 +38,30 @@ class Mandate extends Model
     {
         $arr = parent::toArray();
 
-        if(array_key_exists("bankAccount", $arr)){
-            unset($arr["bankAccount"]);
+        if(array_key_exists("CustomerBankAccount", $arr)){
+            unset($arr["CustomerBankAccount"]);
         }
 
-        if($this->getBankAccount() instanceof BankAccount)
+        if($this->getCustomerBankAccount() instanceof CustomerBankAccount)
         {
-            $arr["links"]["customer_bank_account"] = $this->getBankAccount()->getId();
+            $arr["links"]["customer_bank_account"] = $this->getCustomerBankAccount()->getId();
         }
 
         return $arr;
     }
 
     /**
-     * @param BankAccount $bankAccount
+     * @param CustomerBankAccount $bankAccount
      */
-    public function setBankAccount(BankAccount $bankAccount)
+    public function setCustomerBankAccount(CustomerBankAccount $bankAccount)
     {
         $this->bankAccount = $bankAccount;
     }
 
     /**
-     * @return BankAccount
+     * @return CustomerBankAccount
      */
-    public function getBankAccount()
+    public function getCustomerBankAccount()
     {
         return $this->bankAccount;
     }

@@ -10,7 +10,7 @@ namespace GoCardless\Enterprise\Tests;
 
 
 use GoCardless\Enterprise\Client;
-use GoCardless\Enterprise\Model\BankAccount;
+use GoCardless\Enterprise\Model\CustomerBankAccount;
 use GoCardless\Enterprise\Model\Creditor;
 use GoCardless\Enterprise\Model\Customer;
 use GoCardless\Enterprise\Model\Mandate;
@@ -61,11 +61,25 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @depends testListCustomers
+     * @param Customer $old
+     */
+    public function testGetCustomer(Customer $old)
+    {
+        $new = $this->getClient()->getCustomer($old->getId());
+
+        $newArray = $new->toArray();
+        $oldArray = $old->toArray();
+
+        $this->assertEquals($newArray, $oldArray);
+    }
+
+    /**
+     * @depends testListCustomers
      * @param Customer $customer
      */
-    public function testCreateBankAccount(Customer $customer)
+    public function testCreateCustomerBankAccount(Customer $customer)
     {
-        $account = new BankAccount();
+        $account = new CustomerBankAccount();
         $account->setAccountNumber("55779911");
         $account->setSortCode("200000");
         $account->setCountryCode("GB");
@@ -78,14 +92,14 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEquals(null, $account->getCreatedAt());
     }
 
-    public function testListBankAccounts()
+    public function testListCustomerBankAccounts()
     {
         $accounts = $this->getClient()->listCustomerBankAccounts();
 
         $this->assertTrue(is_array($accounts));
         foreach($accounts as $account)
         {
-            $this->assertInstanceOf('GoCardless\Enterprise\Model\BankAccount', $account);
+            $this->assertInstanceOf('GoCardless\Enterprise\Model\CustomerBankAccount', $account);
         }
 
         $account = reset($accounts);
@@ -94,13 +108,27 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends testListBankAccounts
-     * @param BankAccount $account
+     * @depends testListCustomerBankAccounts
+     * @param CustomerBankAccount $old
      */
-    public function testCreateMandate(BankAccount $account)
+    public function testGetCustomerBankAccount($old)
+    {
+        $new = $this->getClient()->getCustomerBankAccount($old->getId());
+
+        $newArray = $new->toArray();
+        $oldArray = $old->toArray();
+
+        $this->assertEquals($newArray, $oldArray);
+    }
+
+    /**
+     * @depends testListCustomerBankAccounts
+     * @param CustomerBankAccount $account
+     */
+    public function testCreateMandate(CustomerBankAccount $account)
     {
         $mandate = new Mandate();
-        $mandate->setBankAccount($account);
+        $mandate->setCustomerBankAccount($account);
         $mandate->setScheme("bacs");
 
         $mandate = $this->getClient()->createMandate($mandate);
@@ -125,6 +153,20 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         return $mandate;
     }
 
+    /**
+     * @depends testListMandates
+     * @param Mandate $old
+     */
+    public function testGetMandate($old)
+    {
+        $new = $this->getClient()->getMandate($old->getId());
+
+        $newArray = $new->toArray();
+        $oldArray = $old->toArray();
+
+        $this->assertEquals($newArray, $oldArray);
+    }
+
     public function testListCreditors()
     {
         $creditors = $this->getClient()->listCreditors();
@@ -138,6 +180,20 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $creditor = reset($creditors);
 
         return $creditor;
+    }
+
+    /**
+     * @depends testListCreditors
+     * @param Creditor $old
+     */
+    public function testGetCreditor($old)
+    {
+        $new = $this->getClient()->getCreditor($old->getId());
+
+        $newArray = $new->toArray();
+        $oldArray = $old->toArray();
+
+        $this->assertEquals($newArray, $oldArray);
     }
 
     /**
@@ -160,7 +216,6 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($payment->getId());
         $this->assertNotNull($payment->getCreatedAt());
         $this->assertEquals("pending", $payment->getStatus());
-        $this->assertNotNull($payment->getTransactionFee());
         $this->assertNotNull($payment->getCollectedAt());
     }
 
@@ -177,4 +232,20 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         return $payment;
     }
+
+    /**
+     * @depends testListPayments
+     * @param Payment $old
+     */
+    public function testGetPayment($old)
+    {
+        $new = $this->getClient()->getPayment($old->getId());
+
+        $newArray = $new->toArray();
+        $oldArray = $old->toArray();
+
+        $this->assertEquals($newArray, $oldArray);
+    }
+
+
 } 
