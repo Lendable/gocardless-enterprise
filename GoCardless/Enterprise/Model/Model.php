@@ -22,6 +22,11 @@ class Model
     protected $created_at;
 
     /**
+     * @var array
+     */
+    protected $links = [];
+
+    /**
      * @param string $id
      */
     public function setId($id)
@@ -51,6 +56,22 @@ class Model
     public function getCreatedAt()
     {
         return $this->created_at;
+    }
+
+    /**
+     * @param array $links
+     */
+    public function setLinks($links)
+    {
+        $this->links = $links;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLinks()
+    {
+        return $this->links;
     }
 
     /**
