@@ -1,8 +1,8 @@
 {
-    "name": "alpha/gocardless-enterprise",
+    "name": "gocardless/enterprise",
     "type": "library",
     "description": "A php library for interfacing with the GoCardless Enterprise REST API. Please note this library is not for use with their standard API.",
-    "keywords": ["GoCardless", "Direct Debit"],
+    "keywords": ["GoCardless", "Direct Debit", "Alphalend"],
     "homepage": "http://www.alphalend.com/",
     "license": "MIT",
 
