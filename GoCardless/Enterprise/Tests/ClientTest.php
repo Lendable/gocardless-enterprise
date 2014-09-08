@@ -167,6 +167,15 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($newArray, $oldArray);
     }
 
+    /**
+     * @depends testListMandates
+     * @param Mandate $old
+     */
+    public function testGetMandatePdf($old)
+    {
+        $mandate = $this->getClient()->getMandatePdf($old->getId());
+    }
+
     public function testListCreditors()
     {
         $creditors = $this->getClient()->listCreditors();

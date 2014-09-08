@@ -29,7 +29,7 @@ class Payment extends Model
     /**
      * @var string
      */
-    protected $collected_at;
+    protected $charge_date;
 
     /**
      * @var int
@@ -132,19 +132,19 @@ class Payment extends Model
     }
 
     /**
-     * @param string $collected_at
+     * @param string $chage_date
      */
-    public function setCollectedAt($collected_at)
+    public function setCollectedAt($chage_date)
     {
-        $this->collected_at = $collected_at;
+        $this->charge_date = $chage_date;
     }
 
     /**
      * @return string
      */
-    public function getCollectedAt()
+    public function getChargeDate()
     {
-        return $this->collected_at;
+        return $this->charge_date;
     }
 
     /**
