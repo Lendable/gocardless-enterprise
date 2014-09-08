@@ -47,11 +47,6 @@ class Payment extends Model
     protected $mandate;
 
     /**
-     * @var Creditor
-     */
-    protected $creditor;
-
-    /**
      * @param int $amount
      */
     public function setAmount($amount)
@@ -65,22 +60,6 @@ class Payment extends Model
     public function getAmount()
     {
         return $this->amount;
-    }
-
-    /**
-     * @param \GoCardless\Enterprise\Model\Creditor $creditor
-     */
-    public function setCreditor($creditor)
-    {
-        $this->creditor = $creditor;
-    }
-
-    /**
-     * @return \GoCardless\Enterprise\Model\Creditor
-     */
-    public function getCreditor()
-    {
-        return $this->creditor;
     }
 
     /**
@@ -182,13 +161,6 @@ class Payment extends Model
     public function toArray()
     {
         $arr = parent::toArray();
-        if(array_key_exists("creditor", $arr)){
-            unset($arr["creditor"]);
-        }
-
-        if($this->getCreditor()){
-            $arr["links"]["creditor"] = $this->getCreditor()->getId();
-        }
 
         if(array_key_exists("mandate", $arr)){
             unset($arr["mandate"]);

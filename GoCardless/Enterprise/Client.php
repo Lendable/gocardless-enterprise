@@ -37,9 +37,9 @@ class Client
     protected $username;
 
     /**
-     * @var string
+     * @var array
      */
-    protected $gocardlessVersion;
+    protected $defaultHeaders;
 
     /**
      * @var string
@@ -69,7 +69,7 @@ class Client
         $this->baseUrl = $config["baseUrl"];
         $this->username = $config["username"];
         $this->password = $config["password"];
-        $this->gocardlessVersion = $config["gocardlessVersion"];
+        $this->defaultHeaders = ["GoCardless-Version" => $config["gocardlessVersion"]];
     }
 
     /**
@@ -175,7 +175,7 @@ class Client
     public function getMandatePdf($id)
     {
         try{
-            $response = $this->client->get($this->makeUrl(self::ENDPOINT_MANDATE, $id), ["Accept" => "application/pdf"])->setAuth($this->username, $this->password)->send();
+            $response = $this->client->get($this->makeUrl(self::ENDPOINT_MANDATE, $id), $this->defaultHeaders + ["Accept" => "application/pdf", "GoCardless"])->setAuth($this->username, $this->password)->send();
             return $response->getBody(true);
         } catch(BadResponseException $e) {
             throw ApiException::fromBadResponseException($e);
@@ -310,7 +310,7 @@ class Client
     {
         try{
             $body = json_encode([$endpoint => $body]);
-            $response = $this->client->post($this->makeUrl($endpoint), ["Content-Type" => "application/vnd.api+json", "GoCardless-Version" => $this->gocardlessVersion], $body)->setAuth($this->username, $this->password)->send();
+            $response = $this->client->post($this->makeUrl($endpoint), $this->defaultHeaders + ["Content-Type" => "application/vnd.api+json"], $body)->setAuth($this->username, $this->password)->send();
             $responseArray = json_decode($response->getBody(true), true);
             return $responseArray[$endpoint];
         } catch(BadResponseException $e){
@@ -328,7 +328,7 @@ class Client
     protected function get($endpoint, $parameters = [], $path = null)
     {
         try{
-            $response = $this->client->get($this->makeUrl($endpoint, $path), ["GoCardless-Version" => $this->gocardlessVersion], ["query" => $parameters])->setAuth($this->username, $this->password)->send();
+            $response = $this->client->get($this->makeUrl($endpoint, $path), $this->defaultHeaders, ["query" => $parameters])->setAuth($this->username, $this->password)->send();
             $responseArray = json_decode($response->getBody(true), true);
             return $responseArray[$endpoint];
         } catch (BadResponseException $e){

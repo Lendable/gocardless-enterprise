@@ -121,15 +121,46 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($newArray, $oldArray);
     }
 
+    public function testListCreditors()
+    {
+        $creditors = $this->getClient()->listCreditors();
+
+        $this->assertTrue(is_array($creditors));
+        foreach($creditors as $creditor)
+        {
+            $this->assertInstanceOf('GoCardless\Enterprise\Model\Creditor', $creditor);
+        }
+
+        $creditor = reset($creditors);
+
+        return $creditor;
+    }
+
+    /**
+     * @depends testListCreditors
+     * @param Creditor $old
+     */
+    public function testGetCreditor($old)
+    {
+        $new = $this->getClient()->getCreditor($old->getId());
+
+        $newArray = $new->toArray();
+        $oldArray = $old->toArray();
+
+        $this->assertEquals($newArray, $oldArray);
+    }
+
     /**
      * @depends testListCustomerBankAccounts
+     * @depends testListCreditors
      * @param CustomerBankAccount $account
      */
-    public function testCreateMandate(CustomerBankAccount $account)
+    public function testCreateMandate(CustomerBankAccount $account, Creditor $creditor)
     {
         $mandate = new Mandate();
         $mandate->setCustomerBankAccount($account);
         $mandate->setScheme("bacs");
+        $mandate->setCreditor($creditor);
 
         $mandate = $this->getClient()->createMandate($mandate);
 
@@ -174,58 +205,28 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     public function testGetMandatePdf($old)
     {
         $mandate = $this->getClient()->getMandatePdf($old->getId());
-    }
 
-    public function testListCreditors()
-    {
-        $creditors = $this->getClient()->listCreditors();
-
-        $this->assertTrue(is_array($creditors));
-        foreach($creditors as $creditor)
-        {
-            $this->assertInstanceOf('GoCardless\Enterprise\Model\Creditor', $creditor);
-        }
-
-        $creditor = reset($creditors);
-
-        return $creditor;
-    }
-
-    /**
-     * @depends testListCreditors
-     * @param Creditor $old
-     */
-    public function testGetCreditor($old)
-    {
-        $new = $this->getClient()->getCreditor($old->getId());
-
-        $newArray = $new->toArray();
-        $oldArray = $old->toArray();
-
-        $this->assertEquals($newArray, $oldArray);
+        $this->assertEquals("%PDF", substr($mandate, 0, 4));
     }
 
     /**
      * @depends testListMandates
-     * @depends testListCreditors
      * @param Mandate $mandate
-     * @param Creditor $creditor
      */
-    public function testCreatePayment(Mandate $mandate, Creditor $creditor)
+    public function testCreatePayment(Mandate $mandate)
     {
         $payment = new Payment();
         $payment->setAmount(10000);
         $payment->setCurrency("GBP");
         $payment->setDescription("test");
         $payment->setMandate($mandate);
-        $payment->setCreditor($creditor);
 
         $payment = $this->getClient()->createPayment($payment);
 
         $this->assertNotNull($payment->getId());
         $this->assertNotNull($payment->getCreatedAt());
         $this->assertEquals("pending", $payment->getStatus());
-        $this->assertNotNull($payment->getCollectedAt());
+        $this->assertNotNull($payment->getChargeDate());
     }
 
     public function testListPayments()
