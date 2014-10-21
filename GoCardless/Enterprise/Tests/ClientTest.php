@@ -205,6 +205,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     public function testGetMandatePdf($old)
     {
         $mandate = $this->getClient()->getMandatePdf($old->getId());
+        file_put_contents("C:\\www\\mandate.pdf", $mandate);
 
         $this->assertEquals("%PDF", substr($mandate, 0, 4));
     }
@@ -225,7 +226,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNotNull($payment->getId());
         $this->assertNotNull($payment->getCreatedAt());
-        $this->assertEquals("pending", $payment->getStatus());
+        $this->assertEquals("pending_submission", $payment->getStatus());
         $this->assertNotNull($payment->getChargeDate());
     }
 
