@@ -16,7 +16,7 @@
 
     "require": {
         "php": ">=5.3.3",
-        "guzzle/guzzle": "dev-master"
+        "guzzle/guzzle": ">=3.0"
     },
 
     "autoload": {
