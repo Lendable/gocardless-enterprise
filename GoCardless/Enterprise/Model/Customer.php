@@ -263,5 +263,13 @@ class Customer extends Model
         return $this->bankAccounts;
     }
 
+    public function toArray()
+    {
+        $arr = parent::toArray();
+        if(array_key_exists("bankAccounts", $arr)){
+            unset($arr["bankAccounts"]);
+        }
 
+        return $arr;
+    }
 } 
