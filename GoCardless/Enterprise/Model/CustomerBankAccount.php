@@ -62,6 +62,11 @@ class CustomerBankAccount extends Model
             $arr["links"]["customer"] = $this->getCustomer()->getId();
         }
 
+        if(array_key_exists("mandates", $arr)){
+            unset($arr["mandates"]);
+        }
+
+
         return $arr;
     }
 
