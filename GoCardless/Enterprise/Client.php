@@ -198,6 +198,18 @@ class Client
     }
 
     /**
+     * @param Mandate $mandate
+     * @return Mandate
+     */
+    public function cancelMandate(Mandate $mandate)
+    {
+        $response = $this->post(self::ENDPOINT_MANDATE, [], $mandate->getId()."/actions/cancel");
+        $mandate->fromArray($response);
+
+        return $mandate;
+    }
+
+    /**
      * @param Payment $payment
      * @return Payment
      */
@@ -306,11 +318,11 @@ class Client
      * @return array
      * @throws ApiException
      */
-    protected function post($endpoint, $body)
+    protected function post($endpoint, $body, $path = false)
     {
         try{
             $body = json_encode([$endpoint => $body]);
-            $response = $this->client->post($this->makeUrl($endpoint), $this->defaultHeaders + ["Content-Type" => "application/vnd.api+json"], $body)->setAuth($this->username, $this->password)->send();
+            $response = $this->client->post($this->makeUrl($endpoint, $path), $this->defaultHeaders + ["Content-Type" => "application/vnd.api+json"], $body)->setAuth($this->username, $this->password)->send();
             $responseArray = json_decode($response->getBody(true), true);
             return $responseArray[$endpoint];
         } catch(BadResponseException $e){

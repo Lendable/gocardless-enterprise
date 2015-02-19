@@ -257,5 +257,14 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($newArray, $oldArray);
     }
 
+    /**
+     * @depends testListMandates
+     * @param Mandate $mandate
+     */
+    public function testCancelMandate($mandate)
+    {
+        $mandate = $this->getClient()->cancelMandate($mandate);
 
+        $this->assertEquals("cancelled", $mandate->getStatus());
+    }
 } 
