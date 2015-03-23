@@ -47,6 +47,11 @@ class Payment extends Model
     protected $mandate;
 
     /**
+     * @var array
+     */
+    protected $metadata = array();
+
+    /**
      * @param int $amount
      */
     public function setAmount($amount)
@@ -148,6 +153,21 @@ class Payment extends Model
     public function setTransactionFee($transaction_fee)
     {
         $this->transaction_fee = $transaction_fee;
+    }
+
+    public function addMetadata($key, $value)
+    {
+        $this->metadata[$key] = $value;
+    }
+
+    public function setMetadata(array $metadata)
+    {
+        $this->metadata = $metadata;
+    }
+
+    public function getMetadata()
+    {
+        return $this->metadata;
     }
 
     /**
