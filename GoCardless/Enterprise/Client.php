@@ -235,11 +235,15 @@ class Client
      * @param int $limit
      * @param null $after
      * @param null $before
-     * @return Payment[]
+     * @param array $options
+     * @return Model\Payment[]
      */
-    public function listPayments($limit = 50, $after = null, $before = null)
+    public function listPayments($limit = 50, $after = null, $before = null, array $options = [])
     {
         $parameters = array_filter(["after" => $after, "before" => $before, "limit" => $limit]);
+
+        $parameters = array_merge($parameters, $options);
+
         $response = $this->get(self::ENDPOINT_PAYMENTS, $parameters);
         $payments = $this->responseToObjects(new Payment(), $response);
 
