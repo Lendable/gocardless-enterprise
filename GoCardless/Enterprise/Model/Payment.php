@@ -157,11 +157,14 @@ class Payment extends Model
 
     public function addMetadata($key, $value)
     {
-        $this->metadata[$key] = $value;
+        $this->metadata[$key] = (string) $value;
     }
 
     public function setMetadata(array $metadata)
     {
+        foreach($metadata as $k => $v){
+            $metadata[$k] = (string) $v;
+        }
         $this->metadata = $metadata;
     }
 

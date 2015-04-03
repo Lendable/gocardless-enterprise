@@ -229,6 +229,29 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($payment->getChargeDate());
     }
 
+    /**
+     * @depends testListMandates
+     * @param Mandate $mandate
+     */
+    public function testCreatePaymentWithMetadata(Mandate $mandate)
+    {
+        $payment = new Payment();
+        $payment->setAmount(10000);
+        $payment->setCurrency("GBP");
+        $payment->setDescription("test");
+        $payment->setMetadata(["payment_id" => 12]);
+        $payment->setMandate($mandate);
+
+        $payment = $this->getClient()->createPayment($payment);
+
+        $this->assertNotNull($payment->getId());
+        $this->assertNotNull($payment->getCreatedAt());
+        $this->assertEquals("pending_submission", $payment->getStatus());
+        $this->assertNotNull($payment->getChargeDate());
+        $this->assertArrayHasKey("payment_id", $payment->getMetadata());
+        $this->assertEquals(12, $payment->getMetadata()["payment_id"]);
+    }
+
     public function testListPayments()
     {
         $payments = $this->getClient()->listPayments();

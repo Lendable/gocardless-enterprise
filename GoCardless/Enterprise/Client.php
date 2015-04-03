@@ -203,10 +203,19 @@ class Client
      */
     public function cancelMandate(Mandate $mandate)
     {
-        $response = $this->post(self::ENDPOINT_MANDATE, [], $mandate->getId()."/actions/cancel");
-        $mandate->fromArray($response);
+        try{
+            $body = '{"data":{}}';
+            $endpoint = self::ENDPOINT_MANDATE;
+            $path = $mandate->getId()."/actions/cancel";
+            $response = $this->client->post($this->makeUrl($endpoint, $path), $this->defaultHeaders + ["Content-Type" => "application/vnd.api+json"], $body)->setAuth($this->username, $this->password)->send();
+            $responseArray = json_decode($response->getBody(true), true);
+            $response = $responseArray[$endpoint];
 
-        return $mandate;
+            $mandate->fromArray($response);
+            return $mandate;
+        } catch(BadResponseException $e){
+            throw ApiException::fromBadResponseException($e);
+        }
     }
 
     /**
@@ -236,7 +245,7 @@ class Client
      * @param null $after
      * @param null $before
      * @param array $options
-     * @return Model\Payment[]
+     * @return Payment[]
      */
     public function listPayments($limit = 50, $after = null, $before = null, array $options = [])
     {
