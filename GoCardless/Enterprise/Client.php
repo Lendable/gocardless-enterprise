@@ -67,9 +67,10 @@ class Client
     {
         $this->client = $client;
         $this->baseUrl = $config["baseUrl"];
-        $this->username = $config["username"];
-        $this->password = $config["password"];
-        $this->defaultHeaders = ["GoCardless-Version" => $config["gocardlessVersion"]];
+        $this->defaultHeaders = [
+            "GoCardless-Version" => $config["gocardlessVersion"],
+            "Authorization" => "Bearer ". $config["token"]
+        ];
     }
 
     /**
@@ -175,7 +176,7 @@ class Client
     public function getMandatePdf($id)
     {
         try{
-            $response = $this->client->get($this->makeUrl(self::ENDPOINT_MANDATE, $id), $this->defaultHeaders + ["Accept" => "application/pdf", "GoCardless"])->setAuth($this->username, $this->password)->send();
+            $response = $this->client->get($this->makeUrl(self::ENDPOINT_MANDATE, $id), $this->defaultHeaders + ["Accept" => "application/pdf", "GoCardless"])->send();
             return $response->getBody(true);
         } catch(BadResponseException $e) {
             throw ApiException::fromBadResponseException($e);
@@ -207,7 +208,7 @@ class Client
             $body = '{"data":{}}';
             $endpoint = self::ENDPOINT_MANDATE;
             $path = $mandate->getId()."/actions/cancel";
-            $response = $this->client->post($this->makeUrl($endpoint, $path), $this->defaultHeaders + ["Content-Type" => "application/vnd.api+json"], $body)->setAuth($this->username, $this->password)->send();
+            $response = $this->client->post($this->makeUrl($endpoint, $path), $this->defaultHeaders + ["Content-Type" => "application/vnd.api+json"], $body)->send();
             $responseArray = json_decode($response->getBody(true), true);
             $response = $responseArray[$endpoint];
 
@@ -335,7 +336,7 @@ class Client
     {
         try{
             $body = json_encode([$endpoint => $body]);
-            $response = $this->client->post($this->makeUrl($endpoint, $path), $this->defaultHeaders + ["Content-Type" => "application/vnd.api+json"], $body)->setAuth($this->username, $this->password)->send();
+            $response = $this->client->post($this->makeUrl($endpoint, $path), $this->defaultHeaders + ["Content-Type" => "application/vnd.api+json"], $body)->send();
             $responseArray = json_decode($response->getBody(true), true);
             return $responseArray[$endpoint];
         } catch(BadResponseException $e){
@@ -353,7 +354,7 @@ class Client
     protected function get($endpoint, $parameters = [], $path = null)
     {
         try{
-            $response = $this->client->get($this->makeUrl($endpoint, $path), $this->defaultHeaders, ["query" => $parameters])->setAuth($this->username, $this->password)->send();
+            $response = $this->client->get($this->makeUrl($endpoint, $path), $this->defaultHeaders, ["query" => $parameters])->send();
             $responseArray = json_decode($response->getBody(true), true);
             return $responseArray[$endpoint];
         } catch (BadResponseException $e){

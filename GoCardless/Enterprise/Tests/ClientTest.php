@@ -81,7 +81,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     {
         $account = new CustomerBankAccount();
         $account->setAccountNumber("55779911");
-        $account->setSortCode("200000");
+        $account->setBranchCode("200000");
         $account->setCountryCode("GB");
         $account->setAccountHolderName("Mr P D Pamment");
         $account->setCustomer($customer);
