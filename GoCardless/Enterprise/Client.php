@@ -61,16 +61,22 @@ class Client
     /**
      * @param \Guzzle\Http\Client $client
      * @param array $config
-     * ["baseUrl" => ?, "username" => ?, "password" => ?]
+     * ["baseUrl" => ?, "username" => ?, "webhook_secret" => ?, "token" => ?]
      */
     public function __construct(\Guzzle\Http\Client $client, array $config)
     {
         $this->client = $client;
         $this->baseUrl = $config["baseUrl"];
+        $this->secret = $config["webhook_secret"];
         $this->defaultHeaders = [
             "GoCardless-Version" => $config["gocardlessVersion"],
             "Authorization" => "Bearer ". $config["token"]
         ];
+    }
+
+    protected function validateWebhook($content, $signature)
+    {
+        return hash_hmac("sha256", $content, $this->secret) == $signature;
     }
 
     /**
