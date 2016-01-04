@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Paul
- * Date: 08/08/14
- * Time: 11:30
- */
 
 namespace GoCardless\Enterprise;
 
@@ -51,6 +45,8 @@ class Client
     const ENDPOINT_CUSTOMER_BANK = "customer_bank_accounts";
 
     const ENDPOINT_MANDATE = "mandates";
+
+    const ENDPOINT_MANDATE_PDF = "mandate_pdfs";
 
     const ENDPOINT_PAYMENTS = "payments";
 
@@ -182,9 +178,14 @@ class Client
     public function getMandatePdf($id)
     {
         try{
-            $response = $this->client->get($this->makeUrl(self::ENDPOINT_MANDATE, $id), $this->defaultHeaders + ["Accept" => "application/pdf", "GoCardless"])->send();
-            return $response->getBody(true);
+            $body = ['links' => ['mandate' => (string)$id]];
+            $response = $this->post(self::ENDPOINT_MANDATE_PDF, $body);
+
+            return array_key_exists('url', $response) 
+                ? file_get_contents($response['url'])
+                : '';
         } catch(BadResponseException $e) {
+	    var_dump($e->getResponse()->getbody(true));
             throw ApiException::fromBadResponseException($e);
         }
     }
