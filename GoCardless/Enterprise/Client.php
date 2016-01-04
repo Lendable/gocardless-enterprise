@@ -185,7 +185,6 @@ class Client
                 ? file_get_contents($response['url'])
                 : '';
         } catch(BadResponseException $e) {
-	    var_dump($e->getResponse()->getbody(true));
             throw ApiException::fromBadResponseException($e);
         }
     }
