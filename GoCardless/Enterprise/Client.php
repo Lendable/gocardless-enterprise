@@ -2,7 +2,6 @@
 
 namespace GoCardless\Enterprise;
 
-
 use GoCardless\Enterprise\Exceptions\ApiException;
 use GoCardless\Enterprise\Model\CreditorBankAccount;
 use GoCardless\Enterprise\Model\CustomerBankAccount;
@@ -12,6 +11,7 @@ use GoCardless\Enterprise\Model\Mandate;
 use GoCardless\Enterprise\Model\Model;
 use GoCardless\Enterprise\Model\Payment;
 use Guzzle\Http\Exception\BadResponseException;
+use Guzzle\Http\Client as GuzzleClient;
 
 class Client
 {
@@ -55,11 +55,11 @@ class Client
     const ENDPOINT_CREDITOR_BANK = "creditor_bank_accounts";
 
     /**
-     * @param \Guzzle\Http\Client $client
+     * @param GuzzleClient $client
      * @param array $config
      * ["baseUrl" => ?, "username" => ?, "webhook_secret" => ?, "token" => ?]
      */
-    public function __construct(\Guzzle\Http\Client $client, array $config)
+    public function __construct(GuzzleClient $client, array $config)
     {
         $this->client = $client;
         $this->baseUrl = $config["baseUrl"];
@@ -89,12 +89,14 @@ class Client
 
     /**
      * @param $id
+     * @param Customer $customer
      * @return Customer
      */
-    public function getCustomer($id)
+    public function getCustomer($id, Customer $customer = null)
     {
-        $customer = new Customer();
+        $customer = null === $customer ? new Customer() : $customer;
         $customer->fromArray($this->get(self::ENDPOINT_CUSTOMER, [], $id));
+
         return $customer;
     }
 
@@ -102,14 +104,15 @@ class Client
      * @param int $limit
      * @param string $after
      * @param string $before
-     *
+     * @param Customer $customer
      * @return array
      */
-    public function listCustomers($limit = 50, $after = null, $before = null)
+    public function listCustomers($limit = 50, $after = null, $before = null, Customer $customer = null)
     {
+        $customer = null === $customer ? new Customer() : $customer;
         $parameters = array_filter(["after" => $after, "before" => $before, "limit" => $limit]);
         $response = $this->get(self::ENDPOINT_CUSTOMER, $parameters);
-        $customers = $this->responseToObjects(new Customer(), $response);
+        $customers = $this->responseToObjects($customer, $response);
 
         return $customers;
     }
@@ -122,17 +125,20 @@ class Client
     {
         $response = $this->post(self::ENDPOINT_CUSTOMER_BANK, $account->toArray());
         $account->fromArray($response);
+
         return $account;
     }
 
     /**
      * @param $id
+     * @param CustomerBankAccount $customerBankAccount
      * @return CustomerBankAccount
      */
-    public function getCustomerBankAccount($id)
+    public function getCustomerBankAccount($id, CustomerBankAccount $customerBankAccount = null)
     {
-        $account = new CustomerBankAccount();
+        $account = null === $customerBankAccount ? new CustomerBankAccount() : $customerBankAccount;
         $account->fromArray($this->get(self::ENDPOINT_CUSTOMER_BANK, [], $id));
+
         return $account;
     }
 
@@ -140,14 +146,16 @@ class Client
      * @param int $limit
      * @param string $after
      * @param string $before
-     *
+     * @param CustomerBankAccount $customerBankAccount
      * @return array
      */
-    public function listCustomerBankAccounts($limit = 50, $after = null, $before = null)
+    public function listCustomerBankAccounts($limit = 50, $after = null, $before = null, CustomerBankAccount $customerBankAccount = null)
     {
+        $account = null === $customerBankAccount ? new CustomerBankAccount() : $customerBankAccount;
+
         $parameters = array_filter(["after" => $after, "before" => $before, "limit" => $limit]);
         $response = $this->get(self::ENDPOINT_CUSTOMER_BANK, $parameters);
-        $accounts = $this->responseToObjects(new CustomerBankAccount(), $response);
+        $accounts = $this->responseToObjects($account, $response);
 
         return $accounts;
     }
@@ -160,17 +168,20 @@ class Client
     {
         $response = $this->post(self::ENDPOINT_MANDATE, $mandate->toArray());
         $mandate->fromArray($response);
+
         return $mandate;
     }
 
     /**
      * @param $id
+     * @param Mandate $mandate
      * @return Mandate
      */
-    public function getMandate($id)
+    public function getMandate($id, Mandate $mandate = null)
     {
-        $mandate = new Mandate();
+        $mandate = null === $mandate ? new Mandate() : $mandate;
         $mandate->fromArray($this->get(self::ENDPOINT_MANDATE, [], $id));
+
         return $mandate;
     }
 
@@ -195,11 +206,12 @@ class Client
      * @param string $before
      * @return array
      */
-    public function listMandates($limit = 50, $after = null, $before = null)
+    public function listMandates($limit = 50, $after = null, $before = null, Mandate $mandate = null)
     {
+        $mandate = null === $mandate ? new Mandate() : $mandate;
         $parameters = array_filter(["after" => $after, "before" => $before, "limit" => $limit]);
         $response = $this->get(self::ENDPOINT_MANDATE, $parameters);
-        $mandates = $this->responseToObjects(new Mandate(), $response);
+        $mandates = $this->responseToObjects($mandate, $response);
 
         return $mandates;
     }
@@ -238,12 +250,14 @@ class Client
 
     /**
      * @param $id
+     * @param Payment $payment
      * @return Payment
      */
-    public function getPayment($id)
+    public function getPayment($id, Payment $payment = null)
     {
-        $payment = new Payment();
+        $payment = null === $payment ? new Payment() : $payment;
         $payment->fromArray($this->get(self::ENDPOINT_PAYMENTS, [], $id));
+
         return $payment;
     }
 
@@ -252,16 +266,18 @@ class Client
      * @param null $after
      * @param null $before
      * @param array $options
-     * @return Payment[]
+     * @param Payment $payment
+     * @return Model\Payment[]
      */
-    public function listPayments($limit = 50, $after = null, $before = null, array $options = [])
+    public function listPayments($limit = 50, $after = null, $before = null, array $options = [], Payment $payment = null)
     {
+        $payment = null === $payment ? new Payment() : $payment;
         $parameters = array_filter(["after" => $after, "before" => $before, "limit" => $limit]);
 
         $parameters = array_merge($parameters, $options);
 
         $response = $this->get(self::ENDPOINT_PAYMENTS, $parameters);
-        $payments = $this->responseToObjects(new Payment(), $response);
+        $payments = $this->responseToObjects($payment, $response);
 
         return $payments;
     }
@@ -284,12 +300,14 @@ class Client
 
     /**
      * @param $id
+     * @param Creditor $creditor
      * @return Creditor
      */
-    public function getCreditor($id)
+    public function getCreditor($id, Creditor $creditor = null)
     {
-        $creditor = new Creditor();
+        $creditor = null === $creditor ? new Creditor() : $creditor;
         $creditor->fromArray($this->get(self::ENDPOINT_CREDITORS, [], $id));
+
         return $creditor;
     }
 
