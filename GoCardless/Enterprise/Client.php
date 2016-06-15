@@ -249,6 +249,19 @@ class Client
     }
 
     /**
+     * @param Payment $payment
+     *
+     * @return Payment
+     */
+    public function cancelPayment(Payment $payment)
+    {
+        $path = $payment->getId().'/actions/cancel';
+        $this->post(self::ENDPOINT_PAYMENTS, [], $path);
+
+        return $payment;
+    }
+
+    /**
      * @param $id
      * @param Payment $payment
      * @return Payment
