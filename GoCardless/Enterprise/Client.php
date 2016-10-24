@@ -231,6 +231,7 @@ class Client
             $response = $responseArray[$endpoint];
 
             $mandate->fromArray($response);
+     
             return $mandate;
         } catch(BadResponseException $e){
             throw ApiException::fromBadResponseException($e);
@@ -245,6 +246,7 @@ class Client
     {
         $response = $this->post(self::ENDPOINT_PAYMENTS, $payment->toArray());
         $payment->fromArray($response);
+     
         return $payment;
     }
 
@@ -256,7 +258,7 @@ class Client
     public function cancelPayment(Payment $payment)
     {
         $path = $payment->getId().'/actions/cancel';
-        $this->post(self::ENDPOINT_PAYMENTS, [], $path);
+        $payment->fromArray($this->post(self::ENDPOINT_PAYMENTS, [], $path));
 
         return $payment;
     }
