@@ -25,7 +25,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         if(is_null($this->config)){
             $this->config = require(dirname(__FILE__)."/../../../config.php");
         }
-        return new Client(new \Guzzle\Http\Client(), $this->config);
+        return new Client(new \GuzzleHttp\Client(), $this->config);
     }
 
     public function testCreateCustomer()
@@ -290,4 +290,4 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals("cancelled", $mandate->getStatus());
     }
-} 
+}

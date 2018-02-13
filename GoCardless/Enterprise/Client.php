@@ -10,13 +10,13 @@ use GoCardless\Enterprise\Model\Customer;
 use GoCardless\Enterprise\Model\Mandate;
 use GoCardless\Enterprise\Model\Model;
 use GoCardless\Enterprise\Model\Payment;
-use Guzzle\Http\Exception\BadResponseException;
-use Guzzle\Http\Client as GuzzleClient;
+use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Client as GuzzleClient;
 
 class Client
 {
     /**
-     * @var \Guzzle\Http\Client
+     * @var GuzzleClient
      */
     protected $client;
 
@@ -40,19 +40,19 @@ class Client
      */
     protected $password;
 
-    const ENDPOINT_CUSTOMER = "customers";
+    public const ENDPOINT_CUSTOMER = 'customers';
 
-    const ENDPOINT_CUSTOMER_BANK = "customer_bank_accounts";
+    public const ENDPOINT_CUSTOMER_BANK = 'customer_bank_accounts';
 
-    const ENDPOINT_MANDATE = "mandates";
+    public const ENDPOINT_MANDATE = 'mandates';
 
-    const ENDPOINT_MANDATE_PDF = "mandate_pdfs";
+    public const ENDPOINT_MANDATE_PDF = 'mandate_pdfs';
 
-    const ENDPOINT_PAYMENTS = "payments";
+    public const ENDPOINT_PAYMENTS = 'payments';
 
-    const ENDPOINT_CREDITORS = "creditors";
+    public const ENDPOINT_CREDITORS = 'creditors';
 
-    const ENDPOINT_CREDITOR_BANK = "creditor_bank_accounts";
+    public const ENDPOINT_CREDITOR_BANK = 'creditor_bank_accounts';
 
     /**
      * @param GuzzleClient $client
@@ -62,12 +62,12 @@ class Client
     public function __construct(GuzzleClient $client, array $config)
     {
         $this->client = $client;
-        $this->baseUrl = $config["baseUrl"];
-        $this->secret = $config["webhook_secret"];
-        $this->defaultHeaders = [
-            "GoCardless-Version" => $config["gocardlessVersion"],
-            "Authorization" => "Bearer ". $config["token"]
-        ];
+        $this->baseUrl = $config['baseUrl'];
+        $this->secret = $config['webhook_secret'];
+        $this->defaultHeaders = ['headers' => [
+            'GoCardless-Version' => $config['gocardlessVersion'],
+            'Authorization' => 'Bearer '. $config['token']
+        ]];
     }
 
     protected function validateWebhook($content, $signature)
@@ -192,7 +192,7 @@ class Client
             $body = ['links' => ['mandate' => (string)$id]];
             $response = $this->post(self::ENDPOINT_MANDATE_PDF, $body);
 
-            return array_key_exists('url', $response) 
+            return array_key_exists('url', $response)
                 ? file_get_contents($response['url'])
                 : '';
         } catch(BadResponseException $e) {
@@ -226,12 +226,13 @@ class Client
             $body = '{"data":{}}';
             $endpoint = self::ENDPOINT_MANDATE;
             $path = $mandate->getId()."/actions/cancel";
-            $response = $this->client->post($this->makeUrl($endpoint, $path), $this->defaultHeaders + ["Content-Type" => "application/vnd.api+json"], $body)->send();
-            $responseArray = json_decode($response->getBody(true), true);
+            $options = array_merge_recursive($this->defaultHeaders, ['headers' => ['Content-Type' => 'application/vnd.api+json']], ['body' => $body]);
+            $response = $this->client->post($this->makeUrl($endpoint, $path), $options);
+            $responseArray = json_decode((string) $response->getBody(), true);
             $response = $responseArray[$endpoint];
 
             $mandate->fromArray($response);
-     
+
             return $mandate;
         } catch(BadResponseException $e){
             throw ApiException::fromBadResponseException($e);
@@ -246,7 +247,7 @@ class Client
     {
         $response = $this->post(self::ENDPOINT_PAYMENTS, $payment->toArray());
         $payment->fromArray($response);
-     
+
         return $payment;
     }
 
@@ -282,7 +283,7 @@ class Client
      * @param null $before
      * @param array $options
      * @param Payment $payment
-     * @return Model\Payment[]
+     * @return Payment[]
      */
     public function listPayments($limit = 50, $after = null, $before = null, array $options = [], Payment $payment = null)
     {
@@ -367,18 +368,21 @@ class Client
 
     /**
      * @param string $endpoint
-     * @param string $body
+     * @param array $body
+     * @param bool $path
      * @return array
      * @throws ApiException
      */
     protected function post($endpoint, $body, $path = false)
     {
-        try{
+        try {
             $body = json_encode([$endpoint => $body]);
-            $response = $this->client->post($this->makeUrl($endpoint, $path), $this->defaultHeaders + ["Content-Type" => "application/vnd.api+json"], $body)->send();
-            $responseArray = json_decode($response->getBody(true), true);
+            $additionalHeaders = ['headers' => ['Content-Type' => 'application/vnd.api+json']];
+            $options = array_merge_recursive($this->defaultHeaders, $additionalHeaders, ['body' => $body]);
+            $response = $this->client->post($this->makeUrl($endpoint, $path), $options);
+            $responseArray = json_decode((string) $response->getBody(), true);
             return $responseArray[$endpoint];
-        } catch(BadResponseException $e){
+        } catch(BadResponseException $e) {
             throw ApiException::fromBadResponseException($e);
         }
     }
@@ -392,12 +396,12 @@ class Client
      */
     protected function get($endpoint, $parameters = [], $path = null)
     {
-        try{
-            $response = $this->client->get($this->makeUrl($endpoint, $path), $this->defaultHeaders, ["query" => $parameters])->send();
-            $responseArray = json_decode($response->getBody(true), true);
+        try {
+            $response = $this->client->get($this->makeUrl($endpoint, $path), $this->defaultHeaders + ['query' => $parameters]);
+            $responseArray = json_decode((string) $response->getBody(), true);
             return $responseArray[$endpoint];
-        } catch (BadResponseException $e){
+        } catch (BadResponseException $e) {
             throw ApiException::fromBadResponseException($e);
         }
     }
-} 
+}
