@@ -19,7 +19,7 @@ class CustomerBankAccount extends Model
     /**
      * @var string
      */
-    protected $sort_code;
+    protected $branch_code;
 
     /**
      * @var string
@@ -151,19 +151,19 @@ class CustomerBankAccount extends Model
     }
 
     /**
-     * @param string $sort_code
+     * @param string $branch_code
      */
-    public function setSortCode($sort_code)
+    public function setBranchCode($branch_code)
     {
-        $this->sort_code = $sort_code;
+        $this->branch_code = $branch_code;
     }
 
     /**
      * @return string
      */
-    public function getSortCode()
+    public function getBranchCode()
     {
-        return $this->sort_code;
+        return $this->branch_code;
     }
 
     /**

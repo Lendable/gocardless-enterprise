@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Paul
- * Date: 08/08/14
- * Time: 11:30
- */
 
 namespace GoCardless\Enterprise;
-
 
 use GoCardless\Enterprise\Exceptions\ApiException;
 use GoCardless\Enterprise\Model\CreditorBankAccount;
@@ -17,12 +10,13 @@ use GoCardless\Enterprise\Model\Customer;
 use GoCardless\Enterprise\Model\Mandate;
 use GoCardless\Enterprise\Model\Model;
 use GoCardless\Enterprise\Model\Payment;
-use Guzzle\Http\Exception\BadResponseException;
+use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Client as GuzzleClient;
 
 class Client
 {
     /**
-     * @var \Guzzle\Http\Client
+     * @var GuzzleClient
      */
     protected $client;
 
@@ -46,30 +40,39 @@ class Client
      */
     protected $password;
 
-    const ENDPOINT_CUSTOMER = "customers";
+    public const ENDPOINT_CUSTOMER = 'customers';
 
-    const ENDPOINT_CUSTOMER_BANK = "customer_bank_accounts";
+    public const ENDPOINT_CUSTOMER_BANK = 'customer_bank_accounts';
 
-    const ENDPOINT_MANDATE = "mandates";
+    public const ENDPOINT_MANDATE = 'mandates';
 
-    const ENDPOINT_PAYMENTS = "payments";
+    public const ENDPOINT_MANDATE_PDF = 'mandate_pdfs';
 
-    const ENDPOINT_CREDITORS = "creditors";
+    public const ENDPOINT_PAYMENTS = 'payments';
 
-    const ENDPOINT_CREDITOR_BANK = "creditor_bank_accounts";
+    public const ENDPOINT_CREDITORS = 'creditors';
+
+    public const ENDPOINT_CREDITOR_BANK = 'creditor_bank_accounts';
 
     /**
-     * @param \Guzzle\Http\Client $client
+     * @param GuzzleClient $client
      * @param array $config
-     * ["baseUrl" => ?, "username" => ?, "password" => ?]
+     * ["baseUrl" => ?, "username" => ?, "webhook_secret" => ?, "token" => ?]
      */
-    public function __construct(\Guzzle\Http\Client $client, array $config)
+    public function __construct(GuzzleClient $client, array $config)
     {
         $this->client = $client;
-        $this->baseUrl = $config["baseUrl"];
-        $this->username = $config["username"];
-        $this->password = $config["password"];
-        $this->defaultHeaders = ["GoCardless-Version" => $config["gocardlessVersion"]];
+        $this->baseUrl = $config['baseUrl'];
+        $this->secret = $config['webhook_secret'];
+        $this->defaultHeaders = ['headers' => [
+            'GoCardless-Version' => $config['gocardlessVersion'],
+            'Authorization' => 'Bearer '. $config['token']
+        ]];
+    }
+
+    protected function validateWebhook($content, $signature)
+    {
+        return hash_hmac("sha256", $content, $this->secret) == $signature;
     }
 
     /**
@@ -86,12 +89,14 @@ class Client
 
     /**
      * @param $id
+     * @param Customer $customer
      * @return Customer
      */
-    public function getCustomer($id)
+    public function getCustomer($id, Customer $customer = null)
     {
-        $customer = new Customer();
+        $customer = null === $customer ? new Customer() : $customer;
         $customer->fromArray($this->get(self::ENDPOINT_CUSTOMER, [], $id));
+
         return $customer;
     }
 
@@ -99,14 +104,15 @@ class Client
      * @param int $limit
      * @param string $after
      * @param string $before
-     *
+     * @param Customer $customer
      * @return array
      */
-    public function listCustomers($limit = 50, $after = null, $before = null)
+    public function listCustomers($limit = 50, $after = null, $before = null, Customer $customer = null)
     {
+        $customer = null === $customer ? new Customer() : $customer;
         $parameters = array_filter(["after" => $after, "before" => $before, "limit" => $limit]);
         $response = $this->get(self::ENDPOINT_CUSTOMER, $parameters);
-        $customers = $this->responseToObjects(new Customer(), $response);
+        $customers = $this->responseToObjects($customer, $response);
 
         return $customers;
     }
@@ -119,17 +125,20 @@ class Client
     {
         $response = $this->post(self::ENDPOINT_CUSTOMER_BANK, $account->toArray());
         $account->fromArray($response);
+
         return $account;
     }
 
     /**
      * @param $id
+     * @param CustomerBankAccount $customerBankAccount
      * @return CustomerBankAccount
      */
-    public function getCustomerBankAccount($id)
+    public function getCustomerBankAccount($id, CustomerBankAccount $customerBankAccount = null)
     {
-        $account = new CustomerBankAccount();
+        $account = null === $customerBankAccount ? new CustomerBankAccount() : $customerBankAccount;
         $account->fromArray($this->get(self::ENDPOINT_CUSTOMER_BANK, [], $id));
+
         return $account;
     }
 
@@ -137,14 +146,16 @@ class Client
      * @param int $limit
      * @param string $after
      * @param string $before
-     *
+     * @param CustomerBankAccount $customerBankAccount
      * @return array
      */
-    public function listCustomerBankAccounts($limit = 50, $after = null, $before = null)
+    public function listCustomerBankAccounts($limit = 50, $after = null, $before = null, CustomerBankAccount $customerBankAccount = null)
     {
+        $account = null === $customerBankAccount ? new CustomerBankAccount() : $customerBankAccount;
+
         $parameters = array_filter(["after" => $after, "before" => $before, "limit" => $limit]);
         $response = $this->get(self::ENDPOINT_CUSTOMER_BANK, $parameters);
-        $accounts = $this->responseToObjects(new CustomerBankAccount(), $response);
+        $accounts = $this->responseToObjects($account, $response);
 
         return $accounts;
     }
@@ -157,17 +168,20 @@ class Client
     {
         $response = $this->post(self::ENDPOINT_MANDATE, $mandate->toArray());
         $mandate->fromArray($response);
+
         return $mandate;
     }
 
     /**
      * @param $id
+     * @param Mandate $mandate
      * @return Mandate
      */
-    public function getMandate($id)
+    public function getMandate($id, Mandate $mandate = null)
     {
-        $mandate = new Mandate();
+        $mandate = null === $mandate ? new Mandate() : $mandate;
         $mandate->fromArray($this->get(self::ENDPOINT_MANDATE, [], $id));
+
         return $mandate;
     }
 
@@ -175,8 +189,12 @@ class Client
     public function getMandatePdf($id)
     {
         try{
-            $response = $this->client->get($this->makeUrl(self::ENDPOINT_MANDATE, $id), $this->defaultHeaders + ["Accept" => "application/pdf", "GoCardless"])->setAuth($this->username, $this->password)->send();
-            return $response->getBody(true);
+            $body = ['links' => ['mandate' => (string)$id]];
+            $response = $this->post(self::ENDPOINT_MANDATE_PDF, $body);
+
+            return array_key_exists('url', $response)
+                ? file_get_contents($response['url'])
+                : '';
         } catch(BadResponseException $e) {
             throw ApiException::fromBadResponseException($e);
         }
@@ -188,11 +206,12 @@ class Client
      * @param string $before
      * @return array
      */
-    public function listMandates($limit = 50, $after = null, $before = null)
+    public function listMandates($limit = 50, $after = null, $before = null, Mandate $mandate = null)
     {
+        $mandate = null === $mandate ? new Mandate() : $mandate;
         $parameters = array_filter(["after" => $after, "before" => $before, "limit" => $limit]);
         $response = $this->get(self::ENDPOINT_MANDATE, $parameters);
-        $mandates = $this->responseToObjects(new Mandate(), $response);
+        $mandates = $this->responseToObjects($mandate, $response);
 
         return $mandates;
     }
@@ -203,10 +222,21 @@ class Client
      */
     public function cancelMandate(Mandate $mandate)
     {
-        $response = $this->post(self::ENDPOINT_MANDATE, [], $mandate->getId()."/actions/cancel");
-        $mandate->fromArray($response);
+        try{
+            $body = '{"data":{}}';
+            $endpoint = self::ENDPOINT_MANDATE;
+            $path = $mandate->getId()."/actions/cancel";
+            $options = array_merge_recursive($this->defaultHeaders, ['headers' => ['Content-Type' => 'application/vnd.api+json']], ['body' => $body]);
+            $response = $this->client->post($this->makeUrl($endpoint, $path), $options);
+            $responseArray = json_decode((string) $response->getBody(), true);
+            $response = $responseArray[$endpoint];
 
-        return $mandate;
+            $mandate->fromArray($response);
+
+            return $mandate;
+        } catch(BadResponseException $e){
+            throw ApiException::fromBadResponseException($e);
+        }
     }
 
     /**
@@ -217,17 +247,33 @@ class Client
     {
         $response = $this->post(self::ENDPOINT_PAYMENTS, $payment->toArray());
         $payment->fromArray($response);
+
+        return $payment;
+    }
+
+    /**
+     * @param Payment $payment
+     *
+     * @return Payment
+     */
+    public function cancelPayment(Payment $payment)
+    {
+        $path = $payment->getId().'/actions/cancel';
+        $payment->fromArray($this->post(self::ENDPOINT_PAYMENTS, [], $path));
+
         return $payment;
     }
 
     /**
      * @param $id
+     * @param Payment $payment
      * @return Payment
      */
-    public function getPayment($id)
+    public function getPayment($id, Payment $payment = null)
     {
-        $payment = new Payment();
+        $payment = null === $payment ? new Payment() : $payment;
         $payment->fromArray($this->get(self::ENDPOINT_PAYMENTS, [], $id));
+
         return $payment;
     }
 
@@ -235,13 +281,19 @@ class Client
      * @param int $limit
      * @param null $after
      * @param null $before
+     * @param array $options
+     * @param Payment $payment
      * @return Payment[]
      */
-    public function listPayments($limit = 50, $after = null, $before = null)
+    public function listPayments($limit = 50, $after = null, $before = null, array $options = [], Payment $payment = null)
     {
+        $payment = null === $payment ? new Payment() : $payment;
         $parameters = array_filter(["after" => $after, "before" => $before, "limit" => $limit]);
+
+        $parameters = array_merge($parameters, $options);
+
         $response = $this->get(self::ENDPOINT_PAYMENTS, $parameters);
-        $payments = $this->responseToObjects(new Payment(), $response);
+        $payments = $this->responseToObjects($payment, $response);
 
         return $payments;
     }
@@ -264,12 +316,14 @@ class Client
 
     /**
      * @param $id
+     * @param Creditor $creditor
      * @return Creditor
      */
-    public function getCreditor($id)
+    public function getCreditor($id, Creditor $creditor = null)
     {
-        $creditor = new Creditor();
+        $creditor = null === $creditor ? new Creditor() : $creditor;
         $creditor->fromArray($this->get(self::ENDPOINT_CREDITORS, [], $id));
+
         return $creditor;
     }
 
@@ -314,18 +368,21 @@ class Client
 
     /**
      * @param string $endpoint
-     * @param string $body
+     * @param array $body
+     * @param bool $path
      * @return array
      * @throws ApiException
      */
     protected function post($endpoint, $body, $path = false)
     {
-        try{
+        try {
             $body = json_encode([$endpoint => $body]);
-            $response = $this->client->post($this->makeUrl($endpoint, $path), $this->defaultHeaders + ["Content-Type" => "application/vnd.api+json"], $body)->setAuth($this->username, $this->password)->send();
-            $responseArray = json_decode($response->getBody(true), true);
+            $additionalHeaders = ['headers' => ['Content-Type' => 'application/vnd.api+json']];
+            $options = array_merge_recursive($this->defaultHeaders, $additionalHeaders, ['body' => $body]);
+            $response = $this->client->post($this->makeUrl($endpoint, $path), $options);
+            $responseArray = json_decode((string) $response->getBody(), true);
             return $responseArray[$endpoint];
-        } catch(BadResponseException $e){
+        } catch(BadResponseException $e) {
             throw ApiException::fromBadResponseException($e);
         }
     }
@@ -339,12 +396,12 @@ class Client
      */
     protected function get($endpoint, $parameters = [], $path = null)
     {
-        try{
-            $response = $this->client->get($this->makeUrl($endpoint, $path), $this->defaultHeaders, ["query" => $parameters])->setAuth($this->username, $this->password)->send();
-            $responseArray = json_decode($response->getBody(true), true);
+        try {
+            $response = $this->client->get($this->makeUrl($endpoint, $path), $this->defaultHeaders + ['query' => $parameters]);
+            $responseArray = json_decode((string) $response->getBody(), true);
             return $responseArray[$endpoint];
-        } catch (BadResponseException $e){
+        } catch (BadResponseException $e) {
             throw ApiException::fromBadResponseException($e);
         }
     }
-} 
+}
