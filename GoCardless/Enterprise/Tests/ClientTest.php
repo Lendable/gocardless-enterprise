@@ -8,13 +8,13 @@
 
 namespace GoCardless\Enterprise\Tests;
 
-
 use GoCardless\Enterprise\Client;
 use GoCardless\Enterprise\Model\CustomerBankAccount;
 use GoCardless\Enterprise\Model\Creditor;
 use GoCardless\Enterprise\Model\Customer;
 use GoCardless\Enterprise\Model\Mandate;
 use GoCardless\Enterprise\Model\Payment;
+use GuzzleHttp\Client as GuzzleClient;
 
 class ClientTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,7 +25,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         if(is_null($this->config)){
             $this->config = require(dirname(__FILE__)."/../../../config.php");
         }
-        return new Client(new \Guzzle\Http\Client(), $this->config);
+        return new Client(new GuzzleClient(), $this->config);
     }
 
     public function testCreateCustomer()
@@ -290,4 +290,4 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals("cancelled", $mandate->getStatus());
     }
-} 
+}
