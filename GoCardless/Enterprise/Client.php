@@ -12,7 +12,6 @@ use GoCardless\Enterprise\Model\Model;
 use GoCardless\Enterprise\Model\Payment;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Client as GuzzleClient;
-use GuzzleHttp\Psr7\Request;
 
 class Client
 {
@@ -389,7 +388,7 @@ class Client
             $response = $this->client->post(
                 $this->makeUrl($endpoint, $path),
                 [
-                    'headers' => array_merge_recursive($this->defaultHeaders, ['Content-Type' => 'application/vnd.api+json']),
+                    'headers' => array_merge($this->defaultHeaders, ['Content-Type' => 'application/vnd.api+json']),
                     'body' => json_encode([$endpoint => $body])
                 ]
             );
@@ -413,7 +412,7 @@ class Client
         try {
             $response = $this->client->get(
                 $this->makeUrl($endpoint, $path),
-                ['headers' => array_merge_recursive($this->defaultHeaders, ['query' => $parameters])]
+                array_merge(['headers' => $this->defaultHeaders], ['query' => $parameters])
             );
             $responseArray = json_decode((string) $response->getBody(), true);
 
