@@ -228,13 +228,13 @@ class Client
             $endpoint = self::ENDPOINT_MANDATE;
             $path = $mandate->getId()."/actions/cancel";
 
-            $request = new Request(
-                'POST',
+            $response = $this->client->post(
                 $this->makeUrl($endpoint, $path),
-                array_merge($this->defaultHeaders, ['Content-Type' => 'application/vnd.api+json']),
-                json_encode($body)
+                [
+                    'headers' => array_merge($this->defaultHeaders, ['Content-Type' => 'application/vnd.api+json']),
+                    'body' => $body
+                ]
             );
-            $response = $this->client->send($request);
             $responseArray = json_decode((string) $response->getBody(), true);
 
             $mandate->fromArray($responseArray[$endpoint]);
@@ -340,12 +340,10 @@ class Client
      */
     public function createCreditorBankAccount(CreditorBankAccount $account, $setAsDefault = false)
     {
-        $request = new Request(
-            'POST',
+        $response = $this->client->post(
             self::ENDPOINT_CREDITOR_BANK,
-            array_merge_recursive(['set_as_default_payout_account' => $setAsDefault], $account->toArray())
+            ['headers' => array_merge_recursive(['set_as_default_payout_account' => $setAsDefault], $account->toArray())]
         );
-        $response = $this->client->send($request);
         $responseArray = json_decode((string) $response->getBody(), true);
 
         $account->fromArray($responseArray);
@@ -388,13 +386,13 @@ class Client
     protected function post($endpoint, $body, $path = false)
     {
         try {
-            $request = new Request(
-                'POST',
+            $response = $this->client->post(
                 $this->makeUrl($endpoint, $path),
-                array_merge_recursive($this->defaultHeaders, ['Content-Type' => 'application/vnd.api+json']),
-                json_encode([$endpoint => $body])
+                [
+                    'headers' => array_merge_recursive($this->defaultHeaders, ['Content-Type' => 'application/vnd.api+json']),
+                    'body' => json_encode([$endpoint => $body])
+                ]
             );
-            $response = $this->client->send($request);
             $responseArray = json_decode((string) $response->getBody(), true);
 
             return $responseArray[$endpoint];
@@ -413,12 +411,10 @@ class Client
     protected function get($endpoint, $parameters = [], $path = null)
     {
         try {
-            $request = new Request(
-                'GET',
+            $response = $this->client->get(
                 $this->makeUrl($endpoint, $path),
-                array_merge_recursive($this->defaultHeaders, ['query' => $parameters])
+                ['headers' => array_merge_recursive($this->defaultHeaders, ['query' => $parameters])]
             );
-            $response = $this->client->send($request);
             $responseArray = json_decode((string) $response->getBody(), true);
 
             return $responseArray[$endpoint];
