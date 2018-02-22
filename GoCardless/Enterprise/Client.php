@@ -72,7 +72,7 @@ class Client
 
     protected function validateWebhook($content, $signature)
     {
-        return hash_hmac("sha256", $content, $this->secret) == $signature;
+        return hash_equals(hash_hmac("sha256", $content, $this->secret), $signature);
     }
 
     /**
