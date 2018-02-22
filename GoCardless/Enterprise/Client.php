@@ -219,6 +219,7 @@ class Client
     /**
      * @param Mandate $mandate
      * @return Mandate
+     * @throws \RuntimeException
      */
     public function cancelMandate(Mandate $mandate)
     {
@@ -235,6 +236,10 @@ class Client
                 ]
             );
             $responseArray = json_decode((string) $response->getBody(), true);
+
+            if (!isset($responseArray[$endpoint])) {
+                throw new \RuntimeException('Malformed API response');
+            }
 
             $mandate->fromArray($responseArray[$endpoint]);
 
@@ -380,6 +385,7 @@ class Client
      * @param string $endpoint
      * @param string $body
      * @return array
+     * @throws \RuntimeException
      * @throws ApiException
      */
     protected function post($endpoint, $body, $path = false)
@@ -394,6 +400,10 @@ class Client
             );
             $responseArray = json_decode((string) $response->getBody(), true);
 
+            if (!isset($responseArray[$endpoint])) {
+                throw new \RuntimeException('Malformed API response');
+            }
+
             return $responseArray[$endpoint];
         } catch(BadResponseException $e){
             throw ApiException::fromBadResponseException($e);
@@ -404,6 +414,7 @@ class Client
      * @param string $endpoint
      * @param array $parameters
      * @param string $path
+     * @throws \RuntimeException
      * @throws ApiException
      * @return array
      */
@@ -415,6 +426,10 @@ class Client
                 array_merge(['headers' => $this->defaultHeaders], ['query' => $parameters])
             );
             $responseArray = json_decode((string) $response->getBody(), true);
+
+            if (!isset($responseArray[$endpoint])) {
+                throw new \RuntimeException('Malformed API response');
+            }
 
             return $responseArray[$endpoint];
         } catch (BadResponseException $e){
