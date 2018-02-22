@@ -3,15 +3,15 @@
 namespace GoCardless\Enterprise;
 
 use GoCardless\Enterprise\Exceptions\ApiException;
-use GoCardless\Enterprise\Model\CreditorBankAccount;
-use GoCardless\Enterprise\Model\CustomerBankAccount;
 use GoCardless\Enterprise\Model\Creditor;
+use GoCardless\Enterprise\Model\CreditorBankAccount;
 use GoCardless\Enterprise\Model\Customer;
+use GoCardless\Enterprise\Model\CustomerBankAccount;
 use GoCardless\Enterprise\Model\Mandate;
 use GoCardless\Enterprise\Model\Model;
 use GoCardless\Enterprise\Model\Payment;
-use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Exception\BadResponseException;
 
 class Client
 {
@@ -344,13 +344,12 @@ class Client
      */
     public function createCreditorBankAccount(CreditorBankAccount $account, $setAsDefault = false)
     {
-        $response = $this->client->post(
+        $data = $this->post(
             self::ENDPOINT_CREDITOR_BANK,
-            ['headers' => array_merge_recursive(['set_as_default_payout_account' => $setAsDefault], $account->toArray())]
+            array_merge_recursive(['set_as_default_payout_account' => $setAsDefault], $account->toArray())
         );
-        $responseArray = json_decode((string) $response->getBody(), true);
 
-        $account->fromArray($responseArray);
+        $account->fromArray($data);
 
         return $account;
     }
@@ -383,7 +382,7 @@ class Client
 
     /**
      * @param string $endpoint
-     * @param string $body
+     * @param array $body
      * @return array
      * @throws \RuntimeException
      * @throws ApiException
