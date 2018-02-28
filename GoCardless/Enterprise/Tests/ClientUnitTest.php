@@ -4,6 +4,7 @@ namespace GoCardless\Enterprise\Tests;
 
 use GoCardless\Enterprise\Client;
 use GoCardless\Enterprise\Model\CreditorBankAccount;
+use GuzzleHttp\Psr7\Stream;
 
 class ClientUnitTest extends \PHPUnit_Framework_TestCase
 {
@@ -53,8 +54,9 @@ class ClientUnitTest extends \PHPUnit_Framework_TestCase
 
         $this->guzzleClient
             ->expects($this->once())
-            ->method('post')
+            ->method('request')
             ->with(
+                'POST',
                 self::BASE_URL.'creditor_bank_accounts',
                 [
                     'headers' => $this->getDefaultHeaders(),
@@ -124,18 +126,27 @@ JSON
 
     private function mockGuzzleJsonResponse(array $data)
     {
-        $response = $this->getMockBuilder('GuzzleHttp\Message\Response')->disableOriginalConstructor()->getMock();
-        $stream = $this->getMockBuilder('GuzzleHttp\Stream\StreamInterface')->disableOriginalConstructor()->getMock();
+        $response = $this->getMockBuilder('Psr\Http\Message\ResponseInterface')->disableOriginalConstructor()->getMock();
 
         $response
             ->expects($this->any())
             ->method('getBody')
-            ->will($this->returnValue($stream));
-
-        $stream->expects($this->any())
-            ->method('__toString')
-            ->will($this->returnValue(json_encode($data)));
+            ->will($this->returnValue($this->createStream(json_encode($data))));
 
         return $response;
+    }
+
+    /**
+     * @param string $content
+     * @return Stream
+     */
+    private function createStream($content)
+    {
+        $handle = fopen('php://memory', 'rb+');
+
+        fwrite($handle, $content);
+        rewind($handle);
+
+        return new Stream($handle);
     }
 }

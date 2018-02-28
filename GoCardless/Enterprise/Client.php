@@ -228,7 +228,8 @@ class Client
             $endpoint = self::ENDPOINT_MANDATE;
             $path = $mandate->getId()."/actions/cancel";
 
-            $response = $this->client->post(
+            $response = $this->client->request(
+                'POST',
                 $this->makeUrl($endpoint, $path),
                 [
                     'headers' => array_merge($this->defaultHeaders, ['Content-Type' => 'application/vnd.api+json']),
@@ -390,7 +391,8 @@ class Client
     protected function post($endpoint, $body, $path = false)
     {
         try {
-            $response = $this->client->post(
+            $response = $this->client->request(
+                'POST',
                 $this->makeUrl($endpoint, $path),
                 [
                     'headers' => array_merge($this->defaultHeaders, ['Content-Type' => 'application/vnd.api+json']),
@@ -420,7 +422,8 @@ class Client
     protected function get($endpoint, $parameters = [], $path = null)
     {
         try {
-            $response = $this->client->get(
+            $response = $this->client->request(
+                'GET',
                 $this->makeUrl($endpoint, $path),
                 array_merge(['headers' => $this->defaultHeaders], ['query' => $parameters])
             );
