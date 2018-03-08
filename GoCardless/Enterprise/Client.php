@@ -3,20 +3,20 @@
 namespace GoCardless\Enterprise;
 
 use GoCardless\Enterprise\Exceptions\ApiException;
-use GoCardless\Enterprise\Model\CreditorBankAccount;
-use GoCardless\Enterprise\Model\CustomerBankAccount;
 use GoCardless\Enterprise\Model\Creditor;
+use GoCardless\Enterprise\Model\CreditorBankAccount;
 use GoCardless\Enterprise\Model\Customer;
+use GoCardless\Enterprise\Model\CustomerBankAccount;
 use GoCardless\Enterprise\Model\Mandate;
 use GoCardless\Enterprise\Model\Model;
 use GoCardless\Enterprise\Model\Payment;
-use Guzzle\Http\Exception\BadResponseException;
-use Guzzle\Http\Client as GuzzleClient;
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Exception\BadResponseException;
 
 class Client
 {
     /**
-     * @var \Guzzle\Http\Client
+     * @var GuzzleClient
      */
     protected $client;
 
@@ -72,7 +72,7 @@ class Client
 
     protected function validateWebhook($content, $signature)
     {
-        return hash_hmac("sha256", $content, $this->secret) == $signature;
+        return hash_equals(hash_hmac("sha256", $content, $this->secret), $signature);
     }
 
     /**
@@ -192,7 +192,7 @@ class Client
             $body = ['links' => ['mandate' => (string)$id]];
             $response = $this->post(self::ENDPOINT_MANDATE_PDF, $body);
 
-            return array_key_exists('url', $response) 
+            return array_key_exists('url', $response)
                 ? file_get_contents($response['url'])
                 : '';
         } catch(BadResponseException $e) {
@@ -219,6 +219,7 @@ class Client
     /**
      * @param Mandate $mandate
      * @return Mandate
+     * @throws \RuntimeException
      */
     public function cancelMandate(Mandate $mandate)
     {
@@ -226,12 +227,22 @@ class Client
             $body = '{"data":{}}';
             $endpoint = self::ENDPOINT_MANDATE;
             $path = $mandate->getId()."/actions/cancel";
-            $response = $this->client->post($this->makeUrl($endpoint, $path), $this->defaultHeaders + ["Content-Type" => "application/vnd.api+json"], $body)->send();
-            $responseArray = json_decode($response->getBody(true), true);
-            $response = $responseArray[$endpoint];
 
-            $mandate->fromArray($response);
-     
+            $response = $this->client->post(
+                $this->makeUrl($endpoint, $path),
+                [
+                    'headers' => array_merge($this->defaultHeaders, ['Content-Type' => 'application/vnd.api+json']),
+                    'body' => $body
+                ]
+            );
+            $responseArray = json_decode((string) $response->getBody(), true);
+
+            if (!isset($responseArray[$endpoint])) {
+                throw new \RuntimeException('Malformed API response');
+            }
+
+            $mandate->fromArray($responseArray[$endpoint]);
+
             return $mandate;
         } catch(BadResponseException $e){
             throw ApiException::fromBadResponseException($e);
@@ -246,7 +257,7 @@ class Client
     {
         $response = $this->post(self::ENDPOINT_PAYMENTS, $payment->toArray());
         $payment->fromArray($response);
-     
+
         return $payment;
     }
 
@@ -333,8 +344,12 @@ class Client
      */
     public function createCreditorBankAccount(CreditorBankAccount $account, $setAsDefault = false)
     {
-        $response = $this->post(self::ENDPOINT_CREDITOR_BANK, ["set_as_default_payout_account" => $setAsDefault]+$account->toArray());
-        $account->fromArray($response);
+        $data = $this->post(
+            self::ENDPOINT_CREDITOR_BANK,
+            array_merge(['set_as_default_payout_account' => $setAsDefault], $account->toArray())
+        );
+
+        $account->fromArray($data);
 
         return $account;
     }
@@ -362,21 +377,32 @@ class Client
      */
     protected function makeUrl($endpoint, $path = false)
     {
-        return $this->baseUrl.$endpoint.($path ? "/".$path : "");
+        return $this->baseUrl.$endpoint.($path ? '/'.$path : '');
     }
 
     /**
      * @param string $endpoint
-     * @param string $body
+     * @param array $body
      * @return array
+     * @throws \RuntimeException
      * @throws ApiException
      */
-    protected function post($endpoint, $body, $path = false)
+    protected function post($endpoint, array $body, $path = false)
     {
-        try{
-            $body = json_encode([$endpoint => $body]);
-            $response = $this->client->post($this->makeUrl($endpoint, $path), $this->defaultHeaders + ["Content-Type" => "application/vnd.api+json"], $body)->send();
-            $responseArray = json_decode($response->getBody(true), true);
+        try {
+            $response = $this->client->post(
+                $this->makeUrl($endpoint, $path),
+                [
+                    'headers' => array_merge($this->defaultHeaders, ['Content-Type' => 'application/vnd.api+json']),
+                    'body' => json_encode([$endpoint => $body])
+                ]
+            );
+            $responseArray = json_decode((string) $response->getBody(), true);
+
+            if (!isset($responseArray[$endpoint])) {
+                throw new \RuntimeException('Malformed API response');
+            }
+
             return $responseArray[$endpoint];
         } catch(BadResponseException $e){
             throw ApiException::fromBadResponseException($e);
@@ -386,18 +412,27 @@ class Client
     /**
      * @param string $endpoint
      * @param array $parameters
-     * @param string $path
+     * @param string|null $path
+     * @throws \RuntimeException
      * @throws ApiException
      * @return array
      */
-    protected function get($endpoint, $parameters = [], $path = null)
+    protected function get($endpoint, array $parameters = [], $path = null)
     {
-        try{
-            $response = $this->client->get($this->makeUrl($endpoint, $path), $this->defaultHeaders, ["query" => $parameters])->send();
-            $responseArray = json_decode($response->getBody(true), true);
+        try {
+            $response = $this->client->get(
+                $this->makeUrl($endpoint, $path),
+                array_merge(['headers' => $this->defaultHeaders], ['query' => $parameters])
+            );
+            $responseArray = json_decode((string) $response->getBody(), true);
+
+            if (!isset($responseArray[$endpoint])) {
+                throw new \RuntimeException('Malformed API response');
+            }
+
             return $responseArray[$endpoint];
         } catch (BadResponseException $e){
             throw ApiException::fromBadResponseException($e);
         }
     }
-} 
+}
