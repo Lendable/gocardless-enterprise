@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Paul
- * Date: 08/08/14
- * Time: 13:09
- */
 
 namespace GoCardless\Enterprise\Tests;
 
@@ -33,12 +27,12 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $client = $this->getClient();
 
         $customer = new Customer();
-        $customer->setEmail("paul+".time().substr(uniqid(),0, 3)."@alphalend.com");
-        $customer->setGivenName("Paul");
-        $customer->setFamilyName("Pamment");
-        $customer->setAddressLine1("Flat 3G");
+        $customer->setEmail("phpunit+".time().substr(uniqid(),0, 3)."@example.com");
+        $customer->setGivenName("Php");
+        $customer->setFamilyName("Unit");
+        $customer->setAddressLine1("Apt 1");
         $customer->setCity("London");
-        $customer->setPostalCode("E2 8ET");
+        $customer->setPostalCode("W1 1WW");
         $customer->setCountryCode("GB");
 
         $customer = $client->createCustomer($customer);
@@ -83,7 +77,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $account->setAccountNumber("55779911");
         $account->setBranchCode("200000");
         $account->setCountryCode("GB");
-        $account->setAccountHolderName("Mr P D Pamment");
+        $account->setAccountHolderName("Mr Php Unit");
         $account->setCustomer($customer);
 
         $account = $this->getClient()->createCustomerBankAccount($account);

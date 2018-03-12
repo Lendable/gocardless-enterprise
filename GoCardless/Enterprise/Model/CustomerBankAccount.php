@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Paul
- * Date: 08/08/14
- * Time: 15:53
- */
 
 namespace GoCardless\Enterprise\Model;
-
 
 class CustomerBankAccount extends Model
 {
@@ -181,6 +174,4 @@ class CustomerBankAccount extends Model
     {
         return $this->mandates;
     }
-
-
-} 
+}
