@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Paul
- * Date: 12/08/14
- * Time: 10:31
- */
 
 namespace GoCardless\Enterprise\Model;
-
 
 class Payment extends Model
 {
@@ -195,6 +188,4 @@ class Payment extends Model
 
         return $arr;
     }
-
-
-} 
+}

@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Paul
- * Date: 08/08/14
- * Time: 11:54
- */
 
 namespace GoCardless\Enterprise\Model;
-
 
 class Model
 {

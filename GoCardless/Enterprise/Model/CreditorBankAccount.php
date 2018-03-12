@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Paul
- * Date: 14/08/14
- * Time: 15:51
- */
 
 namespace GoCardless\Enterprise\Model;
-
 
 class CreditorBankAccount extends Model
 {
