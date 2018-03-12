@@ -80,17 +80,17 @@ JSON
                 $this->returnValue(
                     $this->mockGuzzleJsonResponse(
                         [
-                            "creditor_bank_accounts" => [
-                                "id" => "BA123",
-                                "created_at" => "2014-05-27T12:43:17.000Z",
-                                "account_holder_name" => "Nude Wines",
-                                "account_number_ending" => "11",
-                                "country_code" => "GB",
-                                "currency" => "GBP",
-                                "bank_name" => "BARCLAYS BANK PLC",
-                                "enabled" => true,
-                                "links" => [
-                                    "creditor" => "CR123",
+                            'creditor_bank_accounts' => [
+                                'id' => 'BA123',
+                                'created_at' => '2014-05-27T12:43:17.000Z',
+                                'account_holder_name' => 'Nude Wines',
+                                'account_number_ending' => '11',
+                                'country_code' => 'GB',
+                                'currency' => 'GBP',
+                                'bank_name' => 'BARCLAYS BANK PLC',
+                                'enabled' => true,
+                                'links' => [
+                                    'creditor' => 'CR123',
                                 ],
                             ],
                         ]

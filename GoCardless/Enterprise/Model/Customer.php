@@ -259,10 +259,10 @@ class Customer extends Model
     public function toArray()
     {
         $arr = parent::toArray();
-        if(array_key_exists("bankAccounts", $arr)){
-            unset($arr["bankAccounts"]);
+        if (array_key_exists('bankAccounts', $arr)) {
+            unset($arr['bankAccounts']);
         }
 
         return $arr;
     }
-} 
+}
