@@ -8,15 +8,15 @@
 
     "authors": [
         {
-            "name": "Paul Pamment",
-            "email": "paul@lendable.co.uk",
+            "name": "Lendable Ltd",
+            "email": "dev@lendable.co.uk",
             "homepage": "https://www.lendable.co.uk"
         }
     ],
 
     "require": {
-        "php": ">=5.4",
-        "guzzlehttp/guzzle": "~6.3"
+        "php": ">=5.5",
+        "guzzlehttp/guzzle": "~6.0"
     },
 
     "autoload": {
