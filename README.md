@@ -1,4 +1,6 @@
-# gocardless-enterprise
+[![Build Status](https://api.travis-ci.org/Lendable/gocardless-enterprise.svg)](https://travis-ci.org/Lendable/gocardless-enterprise)
+
+# Unofficial integration with GoCardless Enterprise API
 Client library for the GoCardless Enterprise API
 
 You will need to create a config.php with the configuration settings (a [dist file](https://github.com/Lendable/gocardless-enterprise/blob/master/config.dist.php) is provided for reference):
