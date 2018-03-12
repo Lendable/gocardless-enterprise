@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Paul
- * Date: 12/08/14
- * Time: 14:14
- */
 
 namespace GoCardless\Enterprise\Model;
-
 
 class Creditor extends Model
 {
@@ -220,6 +213,4 @@ class Creditor extends Model
     {
         return $this->region;
     }
-
-
-} 
+}

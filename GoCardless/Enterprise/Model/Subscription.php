@@ -4,22 +4,21 @@ namespace GoCardless\Enterprise\Model;
 
 class Subscription extends Model
 {
-
     protected $amount;
 
     protected $currency;
 
     protected $name;
-  
-    protected $interval_unit;  
+
+    protected $interval_unit;
 
     protected $day_of_month;
 
     protected $mandate;
-    
-    protected $count;    
-    
-    protected $metadata = array();    
+
+    protected $count;
+
+    protected $metadata = [];
 
     public function setAmount($amount)
     {
@@ -50,7 +49,7 @@ class Subscription extends Model
     {
         return $this->name;
     }
-    
+
     public function setIntervalUnit($interval_unit)
     {
         $this->interval_unit = $interval_unit;
@@ -59,8 +58,8 @@ class Subscription extends Model
     public function getIntervalUnit()
     {
         return $this->interval_unit;
-    } 
-    
+    }
+
     public function setDayOfMonth($day_of_month)
     {
         $this->day_of_month = $day_of_month;
@@ -69,7 +68,7 @@ class Subscription extends Model
     public function getDayOfMonth()
     {
         return $this->day_of_month;
-    }        
+    }
 
     public function setMandate($mandate)
     {
@@ -80,7 +79,7 @@ class Subscription extends Model
     {
         return $this->mandate;
     }
-    
+
     public function setCount($count)
     {
         $this->count = $count;
@@ -89,7 +88,7 @@ class Subscription extends Model
     public function getCount()
     {
         return $this->count;
-    }    
+    }
 
     public function addMetadata($key, $value)
     {
@@ -98,7 +97,7 @@ class Subscription extends Model
 
     public function setMetadata(array $metadata)
     {
-        foreach($metadata as $k => $v){
+        foreach ($metadata as $k => $v) {
             $metadata[$k] = (string) $v;
         }
         $this->metadata = $metadata;
@@ -113,16 +112,14 @@ class Subscription extends Model
     {
         $arr = parent::toArray();
 
-        if(array_key_exists("mandate", $arr)){
-            unset($arr["mandate"]);
+        if (array_key_exists('mandate', $arr)) {
+            unset($arr['mandate']);
         }
 
-        if($this->getMandate()){
-            $arr["links"]["mandate"] = $this->getMandate()->getId();
+        if ($this->getMandate()) {
+            $arr['links']['mandate'] = $this->getMandate()->getId();
         }
 
         return $arr;
     }
-
-
-} 
+}

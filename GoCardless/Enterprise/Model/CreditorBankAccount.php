@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Paul
- * Date: 14/08/14
- * Time: 15:51
- */
 
 namespace GoCardless\Enterprise\Model;
-
 
 class CreditorBankAccount extends Model
 {
@@ -45,16 +38,16 @@ class CreditorBankAccount extends Model
      * @var string
      */
     protected $bank_name;
-    
+
     /**
      * @var string
-     */    
+     */
     protected $bank_code;
-    
+
     /**
      * @var string
-     */    
-    protected $iban; 
+     */
+    protected $iban;
 
     /**
      * @param string $account_holder_name
@@ -167,36 +160,36 @@ class CreditorBankAccount extends Model
     {
         return $this->sort_code;
     }
-    
+
     /**
      * @param string $bank_code
-     */    
-        public function setBankCode($bank_code)
+     */
+    public function setBankCode($bank_code)
     {
         $this->bank_code = $bank_code;
     }
-    
+
     /**
      * @return string
      */
     public function getBankCode()
     {
         return $this->bank_code;
-    } 
-    
+    }
+
     /**
      * @param string $iban
-     */  
+     */
     public function setIban($iban)
     {
         $this->iban = $iban;
     }
-    
+
     /**
      * @return string
      */
     public function getIban()
     {
         return $this->iban;
-    } 
-} 
+    }
+}

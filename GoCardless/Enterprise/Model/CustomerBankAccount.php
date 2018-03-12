@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Paul
- * Date: 08/08/14
- * Time: 15:53
- */
 
 namespace GoCardless\Enterprise\Model;
-
 
 class CustomerBankAccount extends Model
 {
@@ -53,17 +46,16 @@ class CustomerBankAccount extends Model
     {
         $arr = parent::toArray();
 
-        if(array_key_exists("customer", $arr)){
-            unset($arr["customer"]);
+        if (array_key_exists('customer', $arr)) {
+            unset($arr['customer']);
         }
 
-        if($this->getCustomer() instanceof Customer)
-        {
-            $arr["links"]["customer"] = $this->getCustomer()->getId();
+        if ($this->getCustomer() instanceof Customer) {
+            $arr['links']['customer'] = $this->getCustomer()->getId();
         }
 
-        if(array_key_exists("mandates", $arr)){
-            unset($arr["mandates"]);
+        if (array_key_exists('mandates', $arr)) {
+            unset($arr['mandates']);
         }
 
 
@@ -181,6 +173,4 @@ class CustomerBankAccount extends Model
     {
         return $this->mandates;
     }
-
-
-} 
+}
