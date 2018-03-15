@@ -227,7 +227,8 @@ class Client
             $endpoint = self::ENDPOINT_MANDATE;
             $path = $mandate->getId().'/actions/cancel';
 
-            $response = $this->client->post(
+            $response = $this->client->request(
+                'POST',
                 $this->makeUrl($endpoint, $path),
                 [
                     'headers' => array_merge($this->defaultHeaders, ['Content-Type' => 'application/vnd.api+json']),
@@ -344,7 +345,7 @@ class Client
     {
         $data = $this->post(
             self::ENDPOINT_CREDITOR_BANK,
-            array_merge(['set_as_default_payout_account' => $setAsDefault], $account->toArray())
+            array_merge_recursive(['set_as_default_payout_account' => $setAsDefault], $account->toArray())
         );
 
         $account->fromArray($data);
@@ -389,7 +390,8 @@ class Client
     protected function post($endpoint, array $body, $path = false)
     {
         try {
-            $response = $this->client->post(
+            $response = $this->client->request(
+                'POST',
                 $this->makeUrl($endpoint, $path),
                 [
                     'headers' => array_merge($this->defaultHeaders, ['Content-Type' => 'application/vnd.api+json']),
@@ -419,7 +421,8 @@ class Client
     protected function get($endpoint, array $parameters = [], $path = null)
     {
         try {
-            $response = $this->client->get(
+            $response = $this->client->request(
+                'GET',
                 $this->makeUrl($endpoint, $path),
                 array_merge(['headers' => $this->defaultHeaders], ['query' => $parameters])
             );
