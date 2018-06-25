@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Paul
- * Date: 08/08/14
- * Time: 13:09
- */
 
 namespace GoCardless\Enterprise\Tests;
-
 
 use GoCardless\Enterprise\Client;
 use GoCardless\Enterprise\Model\CustomerBankAccount;
@@ -15,17 +8,19 @@ use GoCardless\Enterprise\Model\Creditor;
 use GoCardless\Enterprise\Model\Customer;
 use GoCardless\Enterprise\Model\Mandate;
 use GoCardless\Enterprise\Model\Payment;
+use GuzzleHttp\Client as GuzzleClient;
 
 class ClientTest extends \PHPUnit_Framework_TestCase
 {
-    protected $config = null;
+    protected $config;
 
     protected function getClient()
     {
-        if(is_null($this->config)){
-            $this->config = require(dirname(__FILE__)."/../../../config.php");
+        if (is_null($this->config)) {
+            $this->config = require dirname(__FILE__).'/../../../config.php';
         }
-        return new Client(new \Guzzle\Http\Client(), $this->config);
+
+        return new Client(new GuzzleClient(), $this->config);
     }
 
     public function testCreateCustomer()
@@ -33,13 +28,13 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $client = $this->getClient();
 
         $customer = new Customer();
-        $customer->setEmail("paul+".time().substr(uniqid(),0, 3)."@alphalend.com");
-        $customer->setGivenName("Paul");
-        $customer->setFamilyName("Pamment");
-        $customer->setAddressLine1("Flat 3G");
-        $customer->setCity("London");
-        $customer->setPostalCode("E2 8ET");
-        $customer->setCountryCode("GB");
+        $customer->setEmail('phpunit+'.time().substr(uniqid(), 0, 3).'@example.com');
+        $customer->setGivenName('Php');
+        $customer->setFamilyName('Unit');
+        $customer->setAddressLine1('Apt 1');
+        $customer->setCity('London');
+        $customer->setPostalCode('W1 1WW');
+        $customer->setCountryCode('GB');
 
         $customer = $client->createCustomer($customer);
 
@@ -52,10 +47,11 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $client = $this->getClient();
         $customers = $client->listCustomers();
         $this->assertTrue(is_array($customers));
-        foreach($customers as $customer){
+        foreach ($customers as $customer) {
             $this->assertInstanceOf('GoCardless\Enterprise\Model\Customer', $customer);
         }
         $customer = reset($customers);
+
         return $customer;
     }
 
@@ -80,10 +76,10 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     public function testCreateCustomerBankAccount(Customer $customer)
     {
         $account = new CustomerBankAccount();
-        $account->setAccountNumber("55779911");
-        $account->setSortCode("200000");
-        $account->setCountryCode("GB");
-        $account->setAccountHolderName("Mr P D Pamment");
+        $account->setAccountNumber('55779911');
+        $account->setBranchCode('200000');
+        $account->setCountryCode('GB');
+        $account->setAccountHolderName('Mr Php Unit');
         $account->setCustomer($customer);
 
         $account = $this->getClient()->createCustomerBankAccount($account);
@@ -97,8 +93,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $accounts = $this->getClient()->listCustomerBankAccounts();
 
         $this->assertTrue(is_array($accounts));
-        foreach($accounts as $account)
-        {
+        foreach ($accounts as $account) {
             $this->assertInstanceOf('GoCardless\Enterprise\Model\CustomerBankAccount', $account);
         }
 
@@ -126,8 +121,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $creditors = $this->getClient()->listCreditors();
 
         $this->assertTrue(is_array($creditors));
-        foreach($creditors as $creditor)
-        {
+        foreach ($creditors as $creditor) {
             $this->assertInstanceOf('GoCardless\Enterprise\Model\Creditor', $creditor);
         }
 
@@ -159,7 +153,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     {
         $mandate = new Mandate();
         $mandate->setCustomerBankAccount($account);
-        $mandate->setScheme("bacs");
+        $mandate->setScheme('bacs');
         $mandate->setCreditor($creditor);
 
         $mandate = $this->getClient()->createMandate($mandate);
@@ -174,8 +168,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $mandates = $this->getClient()->listMandates();
 
         $this->assertTrue(is_array($mandates));
-        foreach($mandates as $mandate)
-        {
+        foreach ($mandates as $mandate) {
             $this->assertInstanceOf('GoCardless\Enterprise\Model\Mandate', $mandate);
         }
 
@@ -206,7 +199,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     {
         $mandate = $this->getClient()->getMandatePdf($old->getId());
 
-        $this->assertEquals("%PDF", substr($mandate, 0, 4));
+        $this->assertEquals('%PDF', substr($mandate, 0, 4));
     }
 
     /**
@@ -217,24 +210,46 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     {
         $payment = new Payment();
         $payment->setAmount(10000);
-        $payment->setCurrency("GBP");
-        $payment->setDescription("test");
+        $payment->setCurrency('GBP');
+        $payment->setDescription('test');
         $payment->setMandate($mandate);
 
         $payment = $this->getClient()->createPayment($payment);
 
         $this->assertNotNull($payment->getId());
         $this->assertNotNull($payment->getCreatedAt());
-        $this->assertEquals("pending_submission", $payment->getStatus());
+        $this->assertEquals('pending_submission', $payment->getStatus());
         $this->assertNotNull($payment->getChargeDate());
+    }
+
+    /**
+     * @depends testListMandates
+     * @param Mandate $mandate
+     */
+    public function testCreatePaymentWithMetadata(Mandate $mandate)
+    {
+        $payment = new Payment();
+        $payment->setAmount(10000);
+        $payment->setCurrency('GBP');
+        $payment->setDescription('test');
+        $payment->setMetadata(['payment_id' => 12]);
+        $payment->setMandate($mandate);
+
+        $payment = $this->getClient()->createPayment($payment);
+
+        $this->assertNotNull($payment->getId());
+        $this->assertNotNull($payment->getCreatedAt());
+        $this->assertEquals('pending_submission', $payment->getStatus());
+        $this->assertNotNull($payment->getChargeDate());
+        $this->assertArrayHasKey('payment_id', $payment->getMetadata());
+        $this->assertEquals(12, $payment->getMetadata()['payment_id']);
     }
 
     public function testListPayments()
     {
         $payments = $this->getClient()->listPayments();
         $this->assertTrue(is_array($payments));
-        foreach($payments as $payment)
-        {
+        foreach ($payments as $payment) {
             $this->assertInstanceOf('GoCardless\Enterprise\Model\Payment', $payment);
         }
 
@@ -265,6 +280,6 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     {
         $mandate = $this->getClient()->cancelMandate($mandate);
 
-        $this->assertEquals("cancelled", $mandate->getStatus());
+        $this->assertEquals('cancelled', $mandate->getStatus());
     }
-} 
+}

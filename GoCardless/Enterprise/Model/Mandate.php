@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Paul
- * Date: 08/08/14
- * Time: 17:36
- */
 
 namespace GoCardless\Enterprise\Model;
-
 
 class Mandate extends Model
 {
@@ -43,21 +36,20 @@ class Mandate extends Model
     {
         $arr = parent::toArray();
 
-        if(array_key_exists("customerBankAccount", $arr)){
-            unset($arr["customerBankAccount"]);
+        if (array_key_exists('customerBankAccount', $arr)) {
+            unset($arr['customerBankAccount']);
         }
 
-        if($this->getCustomerBankAccount() instanceof CustomerBankAccount)
-        {
-            $arr["links"]["customer_bank_account"] = $this->getCustomerBankAccount()->getId();
+        if ($this->getCustomerBankAccount() instanceof CustomerBankAccount) {
+            $arr['links']['customer_bank_account'] = $this->getCustomerBankAccount()->getId();
         }
 
-        if(array_key_exists("creditor", $arr)){
-            unset($arr["creditor"]);
+        if (array_key_exists('creditor', $arr)) {
+            unset($arr['creditor']);
         }
 
-        if($this->getCreditor()){
-            $arr["links"]["creditor"] = $this->getCreditor()->getId();
+        if ($this->getCreditor()) {
+            $arr['links']['creditor'] = $this->getCreditor()->getId();
         }
 
         return $arr;
@@ -142,4 +134,4 @@ class Mandate extends Model
     {
         return $this->creditor;
     }
-} 
+}

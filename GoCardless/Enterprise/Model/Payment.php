@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Paul
- * Date: 12/08/14
- * Time: 10:31
- */
 
 namespace GoCardless\Enterprise\Model;
-
 
 class Payment extends Model
 {
@@ -45,6 +38,11 @@ class Payment extends Model
      * @var Mandate
      */
     protected $mandate;
+
+    /**
+     * @var array
+     */
+    protected $metadata = [];
 
     /**
      * @param int $amount
@@ -150,6 +148,24 @@ class Payment extends Model
         $this->transaction_fee = $transaction_fee;
     }
 
+    public function addMetadata($key, $value)
+    {
+        $this->metadata[$key] = (string) $value;
+    }
+
+    public function setMetadata(array $metadata)
+    {
+        foreach ($metadata as $k => $v) {
+            $metadata[$k] = (string) $v;
+        }
+        $this->metadata = $metadata;
+    }
+
+    public function getMetadata()
+    {
+        return $this->metadata;
+    }
+
     /**
      * @return int
      */
@@ -162,16 +178,14 @@ class Payment extends Model
     {
         $arr = parent::toArray();
 
-        if(array_key_exists("mandate", $arr)){
-            unset($arr["mandate"]);
+        if (array_key_exists('mandate', $arr)) {
+            unset($arr['mandate']);
         }
 
-        if($this->getMandate()){
-            $arr["links"]["mandate"] = $this->getMandate()->getId();
+        if ($this->getMandate()) {
+            $arr['links']['mandate'] = $this->getMandate()->getId();
         }
 
         return $arr;
     }
-
-
-} 
+}

@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Paul
- * Date: 08/08/14
- * Time: 11:54
- */
 
 namespace GoCardless\Enterprise\Model;
-
 
 class Model
 {
@@ -87,11 +80,10 @@ class Model
      */
     public function fromArray($data)
     {
-        foreach($data as $property => $value)
-        {
-            if(property_exists($this, $property)){
+        foreach ($data as $property => $value) {
+            if (property_exists($this, $property)) {
                 $this->{$property} = $value;
             }
         }
     }
-} 
+}
