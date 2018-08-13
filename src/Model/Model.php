@@ -1,6 +1,6 @@
 <?php
 
-namespace GoCardless\Enterprise\Model;
+namespace Lendable\GoCardlessEnterpise\Model;
 
 class Model
 {
@@ -36,11 +36,11 @@ class Model
     }
 
     /**
-     * @param string $created_at
+     * @param string $createdAt
      */
-    public function setCreatedAt($created_at)
+    public function setCreatedAt($createdAt)
     {
-        $this->created_at = $created_at;
+        $this->created_at = $createdAt;
     }
 
     /**
@@ -76,7 +76,7 @@ class Model
     }
 
     /**
-     * @param $data
+     * @param array $data
      */
     public function fromArray($data)
     {

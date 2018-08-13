@@ -1,12 +1,16 @@
 <?php
 
-namespace GoCardless\Enterprise\Tests;
+namespace Lendable\GoCardlessEnterpise\Tests\Unit;
 
-use GoCardless\Enterprise\Client;
-use GoCardless\Enterprise\Model\CreditorBankAccount;
+use Lendable\GoCardlessEnterpise\Client;
+use Lendable\GoCardlessEnterpise\Model\CreditorBankAccount;
 use GuzzleHttp\Psr7\Stream;
+use GuzzleHttp\Client as GuzzleClient;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
 
-class ClientUnitTest extends \PHPUnit_Framework_TestCase
+class ClientTest extends TestCase
 {
     const BASE_URL = 'https://api-sandbox.gocardless.com/';
     const VERSION = '2015-07-06';
@@ -20,7 +24,7 @@ class ClientUnitTest extends \PHPUnit_Framework_TestCase
     private $fixture;
 
     /**
-     * @var \GuzzleHttp\Client|\PHPUnit_Framework_MockObject_MockObject
+     * @var GuzzleClient|MockObject
      */
     private $guzzleClient;
 
@@ -36,7 +40,7 @@ class ClientUnitTest extends \PHPUnit_Framework_TestCase
             'token' => self::TOKEN,
         ];
 
-        $this->guzzleClient = $this->getMockBuilder('GuzzleHttp\Client')->disableOriginalConstructor()->getMock();
+        $this->guzzleClient = $this->createMock(GuzzleClient::class);
 
         $this->fixture = new Client($this->guzzleClient, $config);
     }
@@ -126,12 +130,10 @@ JSON
 
     private function mockGuzzleJsonResponse(array $data)
     {
-        $response = $this->getMockBuilder('Psr\Http\Message\ResponseInterface')->disableOriginalConstructor()->getMock();
-
+        $response = $this->createMock(ResponseInterface::class);
         $response
-            ->expects($this->any())
             ->method('getBody')
-            ->will($this->returnValue($this->createStream(json_encode($data))));
+            ->willReturn($this->createStream(json_encode($data)));
 
         return $response;
     }

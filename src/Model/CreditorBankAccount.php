@@ -1,6 +1,6 @@
 <?php
 
-namespace GoCardless\Enterprise\Model;
+namespace Lendable\GoCardlessEnterpise\Model;
 
 class CreditorBankAccount extends Model
 {
@@ -50,11 +50,11 @@ class CreditorBankAccount extends Model
     protected $iban;
 
     /**
-     * @param string $account_holder_name
+     * @param string $accountHolderName
      */
-    public function setAccountHolderName($account_holder_name)
+    public function setAccountHolderName($accountHolderName)
     {
-        $this->account_holder_name = $account_holder_name;
+        $this->account_holder_name = $accountHolderName;
     }
 
     /**
@@ -66,11 +66,11 @@ class CreditorBankAccount extends Model
     }
 
     /**
-     * @param string $account_number
+     * @param string $accountNumber
      */
-    public function setAccountNumber($account_number)
+    public function setAccountNumber($accountNumber)
     {
-        $this->account_number = $account_number;
+        $this->account_number = $accountNumber;
     }
 
     /**
@@ -82,11 +82,11 @@ class CreditorBankAccount extends Model
     }
 
     /**
-     * @param string $account_number_ending
+     * @param string $accountNumberEnding
      */
-    public function setAccountNumberEnding($account_number_ending)
+    public function setAccountNumberEnding($accountNumberEnding)
     {
-        $this->account_number_ending = $account_number_ending;
+        $this->account_number_ending = $accountNumberEnding;
     }
 
     /**
@@ -98,11 +98,11 @@ class CreditorBankAccount extends Model
     }
 
     /**
-     * @param string $bank_name
+     * @param string $bankName
      */
-    public function setBankName($bank_name)
+    public function setBankName($bankName)
     {
-        $this->bank_name = $bank_name;
+        $this->bank_name = $bankName;
     }
 
     /**
@@ -114,11 +114,11 @@ class CreditorBankAccount extends Model
     }
 
     /**
-     * @param string $country_code
+     * @param string $countryCode
      */
-    public function setCountryCode($country_code)
+    public function setCountryCode($countryCode)
     {
-        $this->country_code = $country_code;
+        $this->country_code = $countryCode;
     }
 
     /**
@@ -146,11 +146,11 @@ class CreditorBankAccount extends Model
     }
 
     /**
-     * @param string $sort_code
+     * @param string $sortCode
      */
-    public function setSortCode($sort_code)
+    public function setSortCode($sortCode)
     {
-        $this->sort_code = $sort_code;
+        $this->sort_code = $sortCode;
     }
 
     /**
@@ -162,11 +162,11 @@ class CreditorBankAccount extends Model
     }
 
     /**
-     * @param string $bank_code
+     * @param string $bankCode
      */
-    public function setBankCode($bank_code)
+    public function setBankCode($bankCode)
     {
-        $this->bank_code = $bank_code;
+        $this->bank_code = $bankCode;
     }
 
     /**
