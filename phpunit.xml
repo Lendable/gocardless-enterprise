@@ -6,8 +6,7 @@
         convertWarningsToExceptions="true"
         stopOnFailure="false"
         bootstrap="vendor/autoload.php"
-        verbose="true"
-        syntaxCheck="true">
+        verbose="true">
 
     <testsuites>
         <testsuite name="Lendable's GoCardless Enterprise Test Suite">
