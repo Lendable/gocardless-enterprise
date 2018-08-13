@@ -48,7 +48,7 @@ class Mandate extends Model
             unset($arr['creditor']);
         }
 
-        if ($this->getCreditor()) {
+        if ($this->getCreditor() instanceof Creditor) {
             $arr['links']['creditor'] = $this->getCreditor()->getId();
         }
 
@@ -120,15 +120,15 @@ class Mandate extends Model
     }
 
     /**
-     * @param \GoCardless\Enterprise\Model\Creditor $creditor
+     * @param Creditor $creditor
      */
-    public function setCreditor($creditor)
+    public function setCreditor(Creditor $creditor)
     {
         $this->creditor = $creditor;
     }
 
     /**
-     * @return \GoCardless\Enterprise\Model\Creditor
+     * @return Creditor
      */
     public function getCreditor()
     {

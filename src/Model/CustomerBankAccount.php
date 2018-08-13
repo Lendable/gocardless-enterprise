@@ -63,11 +63,11 @@ class CustomerBankAccount extends Model
     }
 
     /**
-     * @param string $account_holder_name
+     * @param string $accountHolderName
      */
-    public function setAccountHolderName($account_holder_name)
+    public function setAccountHolderName($accountHolderName)
     {
-        $this->account_holder_name = $account_holder_name;
+        $this->account_holder_name = $accountHolderName;
     }
 
     /**
@@ -79,11 +79,11 @@ class CustomerBankAccount extends Model
     }
 
     /**
-     * @param string $account_number
+     * @param string $accountNumber
      */
-    public function setAccountNumber($account_number)
+    public function setAccountNumber($accountNumber)
     {
-        $this->account_number = $account_number;
+        $this->account_number = $accountNumber;
     }
 
     /**
@@ -95,11 +95,11 @@ class CustomerBankAccount extends Model
     }
 
     /**
-     * @param string $country_code
+     * @param string $countryCode
      */
-    public function setCountryCode($country_code)
+    public function setCountryCode($countryCode)
     {
-        $this->country_code = $country_code;
+        $this->country_code = $countryCode;
     }
 
     /**
@@ -127,15 +127,15 @@ class CustomerBankAccount extends Model
     }
 
     /**
-     * @param \GoCardless\Enterprise\Model\Customer $customer
+     * @param Customer $customer
      */
-    public function setCustomer($customer)
+    public function setCustomer(Customer $customer)
     {
         $this->customer = $customer;
     }
 
     /**
-     * @return \GoCardless\Enterprise\Model\Customer
+     * @return Customer
      */
     public function getCustomer()
     {
@@ -143,11 +143,11 @@ class CustomerBankAccount extends Model
     }
 
     /**
-     * @param string $branch_code
+     * @param string $branchCode
      */
-    public function setBranchCode($branch_code)
+    public function setBranchCode($branchCode)
     {
-        $this->branch_code = $branch_code;
+        $this->branch_code = $branchCode;
     }
 
     /**
@@ -159,15 +159,15 @@ class CustomerBankAccount extends Model
     }
 
     /**
-     * @param \GoCardless\Enterprise\Model\Mandate[] $mandates
+     * @param Mandate[] $mandates
      */
-    public function setMandates($mandates)
+    public function setMandates(array $mandates)
     {
         $this->mandates = $mandates;
     }
 
     /**
-     * @return \GoCardless\Enterprise\Model\Mandate[]
+     * @return Mandate[]
      */
     public function getMandates()
     {
