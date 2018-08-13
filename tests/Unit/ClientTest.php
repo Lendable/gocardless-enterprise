@@ -1,12 +1,12 @@
 <?php
 
-namespace GoCardless\Enterprise\Tests;
+namespace Lendable\GoCardlessEnterpise\Tests\Unit;
 
-use GoCardless\Enterprise\Client;
-use GoCardless\Enterprise\Model\CreditorBankAccount;
+use Lendable\GoCardlessEnterpise\Client;
+use Lendable\GoCardlessEnterpise\Model\CreditorBankAccount;
 use GuzzleHttp\Psr7\Stream;
 
-class ClientUnitTest extends \PHPUnit_Framework_TestCase
+class ClientTest extends \PHPUnit_Framework_TestCase
 {
     const BASE_URL = 'https://api-sandbox.gocardless.com/';
     const VERSION = '2015-07-06';

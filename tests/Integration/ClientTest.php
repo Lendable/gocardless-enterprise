@@ -1,13 +1,13 @@
 <?php
 
-namespace GoCardless\Enterprise\Tests;
+namespace Lendable\GoCardlessEnterpise\Tests\Integration;
 
-use GoCardless\Enterprise\Client;
-use GoCardless\Enterprise\Model\CustomerBankAccount;
-use GoCardless\Enterprise\Model\Creditor;
-use GoCardless\Enterprise\Model\Customer;
-use GoCardless\Enterprise\Model\Mandate;
-use GoCardless\Enterprise\Model\Payment;
+use Lendable\GoCardlessEnterpise\Client;
+use Lendable\GoCardlessEnterpise\Model\CustomerBankAccount;
+use Lendable\GoCardlessEnterpise\Model\Creditor;
+use Lendable\GoCardlessEnterpise\Model\Customer;
+use Lendable\GoCardlessEnterpise\Model\Mandate;
+use Lendable\GoCardlessEnterpise\Model\Payment;
 use GuzzleHttp\Client as GuzzleClient;
 
 class ClientTest extends \PHPUnit_Framework_TestCase

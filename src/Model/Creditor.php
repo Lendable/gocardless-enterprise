@@ -1,28 +1,13 @@
 <?php
 
-namespace GoCardless\Enterprise\Model;
+namespace Lendable\GoCardlessEnterpise\Model;
 
-class Customer extends Model
+class Creditor extends Model
 {
     /**
      * @var string
      */
-    protected $email;
-
-    /**
-     * @var string
-     */
-    protected $given_name;
-
-    /**
-     * @var string
-     */
-    protected $family_name;
-
-    /**
-     * @var string
-     */
-    protected $organisation_name;
+    protected $name;
 
     /**
      * @var string
@@ -60,9 +45,14 @@ class Customer extends Model
     protected $country_code;
 
     /**
-     * @var array
+     * @var CreditorBankAccount
      */
-    protected $bankAccounts;
+    protected $gbp_payout_account;
+
+    /**
+     * @var CreditorBankAccount
+     */
+    protected $eur_payout_account;
 
     /**
      * @param string $address_line1
@@ -145,67 +135,51 @@ class Customer extends Model
     }
 
     /**
-     * @param string $email
+     * @param \GoCardless\Enterprise\Model\CreditorBankAccount $eur_payout_account
      */
-    public function setEmail($email)
+    public function setEurPayoutAccount($eur_payout_account)
     {
-        $this->email = $email;
+        $this->eur_payout_account = $eur_payout_account;
+    }
+
+    /**
+     * @return \GoCardless\Enterprise\Model\CreditorBankAccount
+     */
+    public function getEurPayoutAccount()
+    {
+        return $this->eur_payout_account;
+    }
+
+    /**
+     * @param \GoCardless\Enterprise\Model\CreditorBankAccount $gbp_payout_account
+     */
+    public function setGbpPayoutAccount($gbp_payout_account)
+    {
+        $this->gbp_payout_account = $gbp_payout_account;
+    }
+
+    /**
+     * @return \GoCardless\Enterprise\Model\CreditorBankAccount
+     */
+    public function getGbpPayoutAccount()
+    {
+        return $this->gbp_payout_account;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
     }
 
     /**
      * @return string
      */
-    public function getEmail()
+    public function getName()
     {
-        return $this->email;
-    }
-
-    /**
-     * @param string $family_name
-     */
-    public function setFamilyName($family_name)
-    {
-        $this->family_name = $family_name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFamilyName()
-    {
-        return $this->family_name;
-    }
-
-    /**
-     * @param string $given_name
-     */
-    public function setGivenName($given_name)
-    {
-        $this->given_name = $given_name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getGivenName()
-    {
-        return $this->given_name;
-    }
-
-    /**
-     * @param string $organisation_name
-     */
-    public function setOrganisationName($organisation_name)
-    {
-        $this->organisation_name = $organisation_name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOrganisationName()
-    {
-        return $this->organisation_name;
+        return $this->name;
     }
 
     /**
@@ -238,31 +212,5 @@ class Customer extends Model
     public function getRegion()
     {
         return $this->region;
-    }
-
-    /**
-     * @param array $bankAccounts
-     */
-    public function setBankAccounts($bankAccounts)
-    {
-        $this->bankAccounts = $bankAccounts;
-    }
-
-    /**
-     * @return array
-     */
-    public function getBankAccounts()
-    {
-        return $this->bankAccounts;
-    }
-
-    public function toArray()
-    {
-        $arr = parent::toArray();
-        if (array_key_exists('bankAccounts', $arr)) {
-            unset($arr['bankAccounts']);
-        }
-
-        return $arr;
     }
 }

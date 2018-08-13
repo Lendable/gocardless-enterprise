@@ -1,9 +1,14 @@
 <?php
 
-namespace GoCardless\Enterprise\Model;
+namespace Lendable\GoCardlessEnterpise\Model;
 
-class CustomerBankAccount extends Model
+class CreditorBankAccount extends Model
 {
+    /**
+     * @var string
+     */
+    protected $account_holder_name;
+
     /**
      * @var string
      */
@@ -12,7 +17,12 @@ class CustomerBankAccount extends Model
     /**
      * @var string
      */
-    protected $branch_code;
+    protected $sort_code;
+
+    /**
+     * @var string
+     */
+    protected $account_number_ending;
 
     /**
      * @var string
@@ -27,40 +37,17 @@ class CustomerBankAccount extends Model
     /**
      * @var string
      */
-    protected $account_holder_name;
+    protected $bank_name;
 
     /**
-     * @var Customer
+     * @var string
      */
-    protected $customer;
+    protected $bank_code;
 
     /**
-     * @var Mandate[]
+     * @var string
      */
-    protected $mandates;
-
-    /**
-     * @return array
-     */
-    public function toArray()
-    {
-        $arr = parent::toArray();
-
-        if (array_key_exists('customer', $arr)) {
-            unset($arr['customer']);
-        }
-
-        if ($this->getCustomer() instanceof Customer) {
-            $arr['links']['customer'] = $this->getCustomer()->getId();
-        }
-
-        if (array_key_exists('mandates', $arr)) {
-            unset($arr['mandates']);
-        }
-
-
-        return $arr;
-    }
+    protected $iban;
 
     /**
      * @param string $account_holder_name
@@ -92,6 +79,38 @@ class CustomerBankAccount extends Model
     public function getAccountNumber()
     {
         return $this->account_number;
+    }
+
+    /**
+     * @param string $account_number_ending
+     */
+    public function setAccountNumberEnding($account_number_ending)
+    {
+        $this->account_number_ending = $account_number_ending;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAccountNumberEnding()
+    {
+        return $this->account_number_ending;
+    }
+
+    /**
+     * @param string $bank_name
+     */
+    public function setBankName($bank_name)
+    {
+        $this->bank_name = $bank_name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBankName()
+    {
+        return $this->bank_name;
     }
 
     /**
@@ -127,50 +146,50 @@ class CustomerBankAccount extends Model
     }
 
     /**
-     * @param \GoCardless\Enterprise\Model\Customer $customer
+     * @param string $sort_code
      */
-    public function setCustomer($customer)
+    public function setSortCode($sort_code)
     {
-        $this->customer = $customer;
-    }
-
-    /**
-     * @return \GoCardless\Enterprise\Model\Customer
-     */
-    public function getCustomer()
-    {
-        return $this->customer;
-    }
-
-    /**
-     * @param string $branch_code
-     */
-    public function setBranchCode($branch_code)
-    {
-        $this->branch_code = $branch_code;
+        $this->sort_code = $sort_code;
     }
 
     /**
      * @return string
      */
-    public function getBranchCode()
+    public function getSortCode()
     {
-        return $this->branch_code;
+        return $this->sort_code;
     }
 
     /**
-     * @param \GoCardless\Enterprise\Model\Mandate[] $mandates
+     * @param string $bank_code
      */
-    public function setMandates($mandates)
+    public function setBankCode($bank_code)
     {
-        $this->mandates = $mandates;
+        $this->bank_code = $bank_code;
     }
 
     /**
-     * @return \GoCardless\Enterprise\Model\Mandate[]
+     * @return string
      */
-    public function getMandates()
+    public function getBankCode()
     {
-        return $this->mandates;
+        return $this->bank_code;
+    }
+
+    /**
+     * @param string $iban
+     */
+    public function setIban($iban)
+    {
+        $this->iban = $iban;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIban()
+    {
+        return $this->iban;
     }
 }

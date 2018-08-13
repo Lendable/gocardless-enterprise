@@ -1,6 +1,6 @@
 <?php
 
-namespace GoCardless\Enterprise\Model;
+namespace Lendable\GoCardlessEnterpise\Model;
 
 class Subscription extends Model
 {

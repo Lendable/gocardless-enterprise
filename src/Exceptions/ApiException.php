@@ -1,6 +1,6 @@
 <?php
 
-namespace GoCardless\Enterprise\Exceptions;
+namespace Lendable\GoCardlessEnterpise\Exceptions;
 
 use GuzzleHttp\Exception\BadResponseException;
 
