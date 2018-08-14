@@ -1,15 +1,15 @@
 <?php
 
-namespace GoCardless\Enterprise;
+namespace Lendable\GoCardlessEnterpise;
 
-use GoCardless\Enterprise\Exceptions\ApiException;
-use GoCardless\Enterprise\Model\Creditor;
-use GoCardless\Enterprise\Model\CreditorBankAccount;
-use GoCardless\Enterprise\Model\Customer;
-use GoCardless\Enterprise\Model\CustomerBankAccount;
-use GoCardless\Enterprise\Model\Mandate;
-use GoCardless\Enterprise\Model\Model;
-use GoCardless\Enterprise\Model\Payment;
+use Lendable\GoCardlessEnterpise\Exceptions\ApiException;
+use Lendable\GoCardlessEnterpise\Model\Creditor;
+use Lendable\GoCardlessEnterpise\Model\CreditorBankAccount;
+use Lendable\GoCardlessEnterpise\Model\Customer;
+use Lendable\GoCardlessEnterpise\Model\CustomerBankAccount;
+use Lendable\GoCardlessEnterpise\Model\Mandate;
+use Lendable\GoCardlessEnterpise\Model\Model;
+use Lendable\GoCardlessEnterpise\Model\Payment;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\BadResponseException;
 
@@ -28,17 +28,12 @@ class Client
     /**
      * @var string
      */
-    protected $username;
+    protected $secret;
 
     /**
      * @var array
      */
     protected $defaultHeaders;
-
-    /**
-     * @var string
-     */
-    protected $password;
 
     const ENDPOINT_CUSTOMER = 'customers';
 
@@ -57,7 +52,7 @@ class Client
     /**
      * @param GuzzleClient $client
      * @param array $config
-     * ["baseUrl" => ?, "username" => ?, "webhook_secret" => ?, "token" => ?]
+     * ["baseUrl" => ?, "gocardlessVersion" => ?, "webhook_secret" => ?, "token" => ?]
      */
     public function __construct(GuzzleClient $client, array $config)
     {
@@ -66,10 +61,15 @@ class Client
         $this->secret = $config['webhook_secret'];
         $this->defaultHeaders = [
             'GoCardless-Version' => $config['gocardlessVersion'],
-            'Authorization' => 'Bearer '.$config['token']
+            'Authorization' => sprintf('Bearer %s', $config['token']),
         ];
     }
 
+    /**
+     * @param string $content
+     * @param string $signature
+     * @return bool
+     */
     protected function validateWebhook($content, $signature)
     {
         return hash_equals(hash_hmac('sha256', $content, $this->secret), $signature);
@@ -88,8 +88,8 @@ class Client
     }
 
     /**
-     * @param $id
-     * @param Customer $customer
+     * @param string $id
+     * @param Customer|null $customer
      * @return Customer
      */
     public function getCustomer($id, Customer $customer = null)
@@ -102,9 +102,9 @@ class Client
 
     /**
      * @param int $limit
-     * @param string $after
-     * @param string $before
-     * @param Customer $customer
+     * @param string|null $after
+     * @param string|null $before
+     * @param Customer|null $customer
      * @return array
      */
     public function listCustomers($limit = 50, $after = null, $before = null, Customer $customer = null)
@@ -130,8 +130,8 @@ class Client
     }
 
     /**
-     * @param $id
-     * @param CustomerBankAccount $customerBankAccount
+     * @param string $id
+     * @param CustomerBankAccount|null $customerBankAccount
      * @return CustomerBankAccount
      */
     public function getCustomerBankAccount($id, CustomerBankAccount $customerBankAccount = null)
@@ -144,9 +144,9 @@ class Client
 
     /**
      * @param int $limit
-     * @param string $after
-     * @param string $before
-     * @param CustomerBankAccount $customerBankAccount
+     * @param string|null $after
+     * @param string|null $before
+     * @param CustomerBankAccount|null $customerBankAccount
      * @return array
      */
     public function listCustomerBankAccounts($limit = 50, $after = null, $before = null, CustomerBankAccount $customerBankAccount = null)
@@ -173,8 +173,8 @@ class Client
     }
 
     /**
-     * @param $id
-     * @param Mandate $mandate
+     * @param string $id
+     * @param Mandate|null $mandate
      * @return Mandate
      */
     public function getMandate($id, Mandate $mandate = null)
@@ -185,15 +185,27 @@ class Client
         return $mandate;
     }
 
+    /**
+     * @param string $id
+     * @return string
+     * @throws \RuntimeException
+     * @throws ApiException
+     */
     public function getMandatePdf($id)
     {
         try {
-            $body = ['links' => ['mandate' => (string) $id]];
+            $body = ['links' => ['mandate' => $id]];
             $response = $this->post(self::ENDPOINT_MANDATE_PDF, $body);
 
-            return array_key_exists('url', $response)
-                ? file_get_contents($response['url'])
-                : '';
+            if (!array_key_exists('url', $response)) {
+                return '';
+            }
+            $contents = file_get_contents($response['url']);
+            if ($contents === false) {
+                throw new \RuntimeException(sprintf('Cannot read the file contents of %s', $response['url']));
+            }
+
+            return $contents;
         } catch (BadResponseException $e) {
             throw ApiException::fromBadResponseException($e);
         }
@@ -201,8 +213,9 @@ class Client
 
     /**
      * @param int $limit
-     * @param string $after
-     * @param string $before
+     * @param string|null $after
+     * @param string|null $before
+     * @param Mandate|null $mandate
      * @return array
      */
     public function listMandates($limit = 50, $after = null, $before = null, Mandate $mandate = null)
@@ -263,7 +276,6 @@ class Client
 
     /**
      * @param Payment $payment
-     *
      * @return Payment
      */
     public function cancelPayment(Payment $payment)
@@ -275,8 +287,8 @@ class Client
     }
 
     /**
-     * @param $id
-     * @param Payment $payment
+     * @param string $id
+     * @param Payment|null $payment
      * @return Payment
      */
     public function getPayment($id, Payment $payment = null)
@@ -289,11 +301,11 @@ class Client
 
     /**
      * @param int $limit
-     * @param null $after
-     * @param null $before
+     * @param string|null $after
+     * @param string|null $before
      * @param array $options
-     * @param Payment $payment
-     * @return Model\Payment[]
+     * @param Payment|null $payment
+     * @return Payment[]
      */
     public function listPayments($limit = 50, $after = null, $before = null, array $options = [], Payment $payment = null)
     {
@@ -303,6 +315,7 @@ class Client
         $parameters = array_merge($parameters, $options);
 
         $response = $this->get(self::ENDPOINT_PAYMENTS, $parameters);
+        /** @var Payment[] $payments */
         $payments = $this->responseToObjects($payment, $response);
 
         return $payments;
@@ -310,22 +323,23 @@ class Client
 
     /**
      * @param int $limit
-     * @param null $after
-     * @param null $before
+     * @param string|null $after
+     * @param string|null $before
      * @return Creditor[]
      */
     public function listCreditors($limit = 50, $after = null, $before = null)
     {
         $parameters = array_filter(['after' => $after, 'before' => $before, 'limit' => $limit]);
         $response = $this->get(self::ENDPOINT_CREDITORS, $parameters);
+        /** @var Creditor[] $creditors */
         $creditors = $this->responseToObjects(new Creditor(), $response);
 
         return $creditors;
     }
 
     /**
-     * @param $id
-     * @param Creditor $creditor
+     * @param string $id
+     * @param Creditor|null $creditor
      * @return Creditor
      */
     public function getCreditor($id, Creditor $creditor = null)
@@ -355,7 +369,7 @@ class Client
 
     /**
      * @param Model $example
-     * @param $response
+     * @param array $response
      * @return Model[]
      */
     protected function responseToObjects(Model $example, $response)
@@ -371,13 +385,13 @@ class Client
     }
 
     /**
-     * @param $endpoint
-     * @param $path
+     * @param string $endpoint
+     * @param string|null $path
      * @return string
      */
-    protected function makeUrl($endpoint, $path = false)
+    protected function makeUrl($endpoint, $path = null)
     {
-        return $this->baseUrl.$endpoint.($path ? '/'.$path : '');
+        return $this->baseUrl.$endpoint.(is_string($path) ? '/'.$path : '');
     }
 
     /**
