@@ -146,6 +146,8 @@ JSON
     {
         $handle = fopen('php://memory', 'rb+');
 
+        assert(is_resource($handle));
+
         fwrite($handle, $content);
         rewind($handle);
 
