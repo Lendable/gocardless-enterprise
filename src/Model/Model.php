@@ -1,6 +1,6 @@
 <?php
 
-namespace Lendable\GoCardlessEnterpise\Model;
+namespace Lendable\GoCardlessEnterprise\Model;
 
 class Model
 {

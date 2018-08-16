@@ -1,9 +1,9 @@
 <?php
 
-namespace Lendable\GoCardlessEnterpise\Tests\Unit;
+namespace Lendable\GoCardlessEnterprise\Tests\Unit;
 
-use Lendable\GoCardlessEnterpise\Client;
-use Lendable\GoCardlessEnterpise\Model\CreditorBankAccount;
+use Lendable\GoCardlessEnterprise\Client;
+use Lendable\GoCardlessEnterprise\Model\CreditorBankAccount;
 use GuzzleHttp\Psr7\Stream;
 
 class ClientTest extends \PHPUnit_Framework_TestCase
