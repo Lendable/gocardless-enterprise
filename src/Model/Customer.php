@@ -1,6 +1,6 @@
 <?php
 
-namespace GoCardless\Enterprise\Model;
+namespace Lendable\GoCardlessEnterprise\Model;
 
 class Customer extends Model
 {
