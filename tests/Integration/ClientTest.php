@@ -9,15 +9,23 @@ use Lendable\GoCardlessEnterprise\Model\Customer;
 use Lendable\GoCardlessEnterprise\Model\Mandate;
 use Lendable\GoCardlessEnterprise\Model\Payment;
 use GuzzleHttp\Client as GuzzleClient;
+use PHPUnit\Framework\TestCase;
 
-class ClientTest extends \PHPUnit_Framework_TestCase
+class ClientTest extends TestCase
 {
     protected $config;
 
     protected function getClient()
     {
-        if (is_null($this->config)) {
-            $this->config = require dirname(__FILE__).'/../../../config.php';
+        if ($this->config === null) {
+            try {
+                $this->config = require __DIR__.'/../../config.php';
+            } catch (\Throwable $t) {
+                $errorMessage = 'The integration tests required valid tests credentials to be provided in config.php. '
+                    .'For help how to obtain test credentials visit https://manage-sandbox.gocardless.com/signup';
+
+                throw new \RuntimeException($errorMessage);
+            }
         }
 
         return new Client(new GuzzleClient(), $this->config);
@@ -28,7 +36,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $client = $this->getClient();
 
         $customer = new Customer();
-        $customer->setEmail('phpunit+'.time().substr(uniqid(), 0, 3).'@example.com');
+        $customer->setEmail('phpunit+'.time().substr(uniqid('test', true), 0, 3).'@example.com');
         $customer->setGivenName('Php');
         $customer->setFamilyName('Unit');
         $customer->setAddressLine1('Apt 1');
@@ -48,7 +56,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $customers = $client->listCustomers();
         $this->assertTrue(is_array($customers));
         foreach ($customers as $customer) {
-            $this->assertInstanceOf('GoCardless\Enterprise\Model\Customer', $customer);
+            $this->assertInstanceOf(Customer::class, $customer);
         }
         $customer = reset($customers);
 
@@ -94,7 +102,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue(is_array($accounts));
         foreach ($accounts as $account) {
-            $this->assertInstanceOf('GoCardless\Enterprise\Model\CustomerBankAccount', $account);
+            $this->assertInstanceOf(CustomerBankAccount::class, $account);
         }
 
         $account = reset($accounts);
@@ -122,7 +130,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue(is_array($creditors));
         foreach ($creditors as $creditor) {
-            $this->assertInstanceOf('GoCardless\Enterprise\Model\Creditor', $creditor);
+            $this->assertInstanceOf(Creditor::class, $creditor);
         }
 
         $creditor = reset($creditors);
@@ -169,7 +177,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue(is_array($mandates));
         foreach ($mandates as $mandate) {
-            $this->assertInstanceOf('GoCardless\Enterprise\Model\Mandate', $mandate);
+            $this->assertInstanceOf(Mandate::class, $mandate);
         }
 
         $mandate = reset($mandates);
@@ -250,7 +258,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $payments = $this->getClient()->listPayments();
         $this->assertTrue(is_array($payments));
         foreach ($payments as $payment) {
-            $this->assertInstanceOf('GoCardless\Enterprise\Model\Payment', $payment);
+            $this->assertInstanceOf(Payment::class, $payment);
         }
 
         $payment = reset($payments);

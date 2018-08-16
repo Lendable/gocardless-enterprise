@@ -55,11 +55,11 @@ class Creditor extends Model
     protected $eur_payout_account;
 
     /**
-     * @param string $address_line1
+     * @param string $addressLine1
      */
-    public function setAddressLine1($address_line1)
+    public function setAddressLine1($addressLine1)
     {
-        $this->address_line1 = $address_line1;
+        $this->address_line1 = $addressLine1;
     }
 
     /**
@@ -71,11 +71,11 @@ class Creditor extends Model
     }
 
     /**
-     * @param string $address_line2
+     * @param string $addressLine2
      */
-    public function setAddressLine2($address_line2)
+    public function setAddressLine2($addressLine2)
     {
-        $this->address_line2 = $address_line2;
+        $this->address_line2 = $addressLine2;
     }
 
     /**
@@ -87,11 +87,11 @@ class Creditor extends Model
     }
 
     /**
-     * @param string $address_line3
+     * @param string $addressLine3
      */
-    public function setAddressLine3($address_line3)
+    public function setAddressLine3($addressLine3)
     {
-        $this->address_line3 = $address_line3;
+        $this->address_line3 = $addressLine3;
     }
 
     /**
@@ -119,11 +119,11 @@ class Creditor extends Model
     }
 
     /**
-     * @param string $country_code
+     * @param string $countryCode
      */
-    public function setCountryCode($country_code)
+    public function setCountryCode($countryCode)
     {
-        $this->country_code = $country_code;
+        $this->country_code = $countryCode;
     }
 
     /**
@@ -135,15 +135,15 @@ class Creditor extends Model
     }
 
     /**
-     * @param \GoCardless\Enterprise\Model\CreditorBankAccount $eur_payout_account
+     * @param CreditorBankAccount $eurPayoutAccount
      */
-    public function setEurPayoutAccount($eur_payout_account)
+    public function setEurPayoutAccount(CreditorBankAccount $eurPayoutAccount)
     {
-        $this->eur_payout_account = $eur_payout_account;
+        $this->eur_payout_account = $eurPayoutAccount;
     }
 
     /**
-     * @return \GoCardless\Enterprise\Model\CreditorBankAccount
+     * @return CreditorBankAccount
      */
     public function getEurPayoutAccount()
     {
@@ -151,15 +151,15 @@ class Creditor extends Model
     }
 
     /**
-     * @param \GoCardless\Enterprise\Model\CreditorBankAccount $gbp_payout_account
+     * @param CreditorBankAccount $gbpPayoutAccount
      */
-    public function setGbpPayoutAccount($gbp_payout_account)
+    public function setGbpPayoutAccount(CreditorBankAccount $gbpPayoutAccount)
     {
-        $this->gbp_payout_account = $gbp_payout_account;
+        $this->gbp_payout_account = $gbpPayoutAccount;
     }
 
     /**
-     * @return \GoCardless\Enterprise\Model\CreditorBankAccount
+     * @return CreditorBankAccount
      */
     public function getGbpPayoutAccount()
     {
@@ -183,11 +183,11 @@ class Creditor extends Model
     }
 
     /**
-     * @param string $postal_code
+     * @param string $postalCode
      */
-    public function setPostalCode($postal_code)
+    public function setPostalCode($postalCode)
     {
-        $this->postal_code = $postal_code;
+        $this->postal_code = $postalCode;
     }
 
     /**
