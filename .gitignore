@@ -1,5 +1,5 @@
-composer.phar
-.idea
+bin
 vendor
+
 config.php
 composer.lock
