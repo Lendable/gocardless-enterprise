@@ -2,7 +2,7 @@
     "name": "gocardless/enterprise",
     "type": "library",
     "description": "A php library for interfacing with the GoCardless Enterprise REST API. Please note this library is not for use with their standard API.",
-    "keywords": ["GoCardless", "Direct Debit", "Lendable"],
+    "keywords": ["GoCardless", "GoCardless Enterprise", "Direct Debit", "Lendable"],
     "homepage": "https://www.lendable.co.uk",
     "license": "MIT",
 
@@ -14,21 +14,25 @@
         }
     ],
 
+    "autoload": {
+        "psr-4": {
+            "Lendable\\GoCardlessEnterprise\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Lendable\\GoCardlessEnterprise\\Tests\\": "tests/"
+        }
+    },
+
     "require": {
         "php": ">=5.5",
         "guzzlehttp/guzzle": "~6.0"
     },
-
-    "autoload": {
-        "psr-0": {
-            "GoCardless": ""
-        }
-    },
-
     "require-dev": {
-        "phpunit/phpunit": "3.7.*",
         "jakub-onderka/php-parallel-lint": "~0.9",
-        "friendsofphp/php-cs-fixer": "^2.10"
+        "friendsofphp/php-cs-fixer": "^2.10",
+        "phpunit/phpunit": "4.*"
     },
 
     "scripts": {
@@ -37,6 +41,9 @@
         ],
         "code-style": [
             "vendor/bin/php-cs-fixer fix --config='./.php_cs' --show-progress=none --dry-run --no-interaction -v"
+        ],
+        "run-tests": [
+            "vendor/bin/phpunit tests/Unit/"
         ]
     }
 }
