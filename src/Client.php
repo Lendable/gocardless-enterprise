@@ -1,15 +1,15 @@
 <?php
 
-namespace GoCardless\Enterprise;
+namespace Lendable\GoCardlessEnterprise;
 
-use GoCardless\Enterprise\Exceptions\ApiException;
-use GoCardless\Enterprise\Model\Creditor;
-use GoCardless\Enterprise\Model\CreditorBankAccount;
-use GoCardless\Enterprise\Model\Customer;
-use GoCardless\Enterprise\Model\CustomerBankAccount;
-use GoCardless\Enterprise\Model\Mandate;
-use GoCardless\Enterprise\Model\Model;
-use GoCardless\Enterprise\Model\Payment;
+use Lendable\GoCardlessEnterprise\Exceptions\ApiException;
+use Lendable\GoCardlessEnterprise\Model\Creditor;
+use Lendable\GoCardlessEnterprise\Model\CreditorBankAccount;
+use Lendable\GoCardlessEnterprise\Model\Customer;
+use Lendable\GoCardlessEnterprise\Model\CustomerBankAccount;
+use Lendable\GoCardlessEnterprise\Model\Mandate;
+use Lendable\GoCardlessEnterprise\Model\Model;
+use Lendable\GoCardlessEnterprise\Model\Payment;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\BadResponseException;
 
