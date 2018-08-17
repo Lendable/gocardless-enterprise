@@ -8,6 +8,7 @@ return \PhpCsFixer\Config::create()
     ->setRules(
         [
             '@PSR2' => true,
+            '@PHP56Migration' => true,
             '@DoctrineAnnotation' => true,
             'array_syntax' => ['syntax' => 'short'],
             'binary_operator_spaces' => true,

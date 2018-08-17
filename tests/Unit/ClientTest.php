@@ -130,10 +130,12 @@ JSON
 
     private function mockGuzzleJsonResponse(array $data)
     {
+        $streamContent = json_encode($data);
+        assert(is_string($streamContent));
         $response = $this->createMock(ResponseInterface::class);
         $response
             ->method('getBody')
-            ->willReturn($this->createStream(json_encode($data)));
+            ->willReturn($this->createStream($streamContent));
 
         return $response;
     }
@@ -145,6 +147,8 @@ JSON
     private function createStream($content)
     {
         $handle = fopen('php://memory', 'rb+');
+
+        assert(is_resource($handle));
 
         fwrite($handle, $content);
         rewind($handle);
