@@ -1,8 +1,8 @@
 {
     "name": "gocardless/enterprise",
     "type": "library",
-    "description": "A php library for interfacing with the GoCardless Enterprise REST API. Please note this library is not for use with their standard API.",
-    "keywords": ["GoCardless", "GoCardless Enterprise", "Direct Debit", "Lendable"],
+    "description": "A php library for interfacing with the GoCardless Pro (formerly GoCardless Enterprise) REST API. Please note this library is not for use with their standard API.",
+    "keywords": ["GoCardless", "GoCardless Enterprise", "GoCardless Pro", "Direct Debit", "Lendable"],
     "homepage": "https://www.lendable.co.uk",
     "license": "MIT",
 
