@@ -10,6 +10,7 @@ use GoCardless\Enterprise\Model\CustomerBankAccount;
 use GoCardless\Enterprise\Model\Mandate;
 use GoCardless\Enterprise\Model\Model;
 use GoCardless\Enterprise\Model\Payment;
+use GoCardless\Enterprise\Model\Payout;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\BadResponseException;
 
@@ -53,6 +54,8 @@ class Client
     const ENDPOINT_CREDITORS = 'creditors';
 
     const ENDPOINT_CREDITOR_BANK = 'creditor_bank_accounts';
+
+    const ENDPOINT_PAYOUT = 'payouts';
 
     /**
      * @param GuzzleClient $client
@@ -368,6 +371,40 @@ class Client
         $account->fromArray($data);
 
         return $account;
+    }
+
+    /**
+     * @param string $id
+     * @param Payout|null $payout
+     * @return Payout
+     */
+    public function getPayout($id, Payout $payout = null)
+    {
+        $payout = null === $payout ? new Payout() : $payout;
+        $payout->fromArray($this->get(self::ENDPOINT_PAYOUT, [], $id));
+
+        return $payout;
+    }
+
+    /**
+     * @param int $limit
+     * @param string|null $after
+     * @param string|null $before
+     * @param array $options
+     * @param Payout|null $payout
+     * @return Payout[]
+     */
+    public function listPayouts($limit = 50, $after = null, $before = null, array $options = [], Payout $payout = null)
+    {
+        $payout = null === $payout ? new Payout() : $payout;
+        $parameters = array_filter(['after' => $after, 'before' => $before, 'limit' => $limit]);
+
+        $parameters = array_merge($parameters, $options);
+
+        $response = $this->get(self::ENDPOINT_PAYOUT, $parameters);
+        $payouts = $this->responseToObjects($payout, $response);
+
+        return $payouts;
     }
 
     /**
