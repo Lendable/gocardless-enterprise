@@ -1,8 +1,9 @@
 <?php
 
-namespace GoCardless\Enterprise\Exceptions;
+namespace Lendable\GoCardlessEnterprise\Exceptions;
 
 use GuzzleHttp\Exception\BadResponseException;
+use Psr\Http\Message\ResponseInterface;
 
 class ApiException extends BadResponseException
 {
@@ -16,10 +17,15 @@ class ApiException extends BadResponseException
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getReasonPhrase()
     {
-        return (string) $this->getResponse()->getBody();
+        $response = $this->getResponse();
+        if (!$response instanceof ResponseInterface) {
+            return null;
+        }
+
+        return (string) $response->getBody();
     }
 }

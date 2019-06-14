@@ -1,6 +1,6 @@
 <?php
 
-namespace GoCardless\Enterprise\Model;
+namespace Lendable\GoCardlessEnterprise\Model;
 
 class Payment extends Model
 {
@@ -45,7 +45,7 @@ class Payment extends Model
     protected $metadata = [];
 
     /**
-     * @param int $amount
+     * @param int $amount Amount must be in whole pence/cents
      */
     public function setAmount($amount)
     {
@@ -53,7 +53,7 @@ class Payment extends Model
     }
 
     /**
-     * @return int
+     * @return int Amount is in whole pence/cents
      */
     public function getAmount()
     {
@@ -93,15 +93,15 @@ class Payment extends Model
     }
 
     /**
-     * @param \GoCardless\Enterprise\Model\Mandate $mandate
+     * @param Mandate $mandate
      */
-    public function setMandate($mandate)
+    public function setMandate(Mandate $mandate)
     {
         $this->mandate = $mandate;
     }
 
     /**
-     * @return \GoCardless\Enterprise\Model\Mandate
+     * @return Mandate
      */
     public function getMandate()
     {
@@ -109,11 +109,11 @@ class Payment extends Model
     }
 
     /**
-     * @param string $chage_date
+     * @param string $chargeDate
      */
-    public function setCollectedAt($chage_date)
+    public function setCollectedAt($chargeDate)
     {
-        $this->charge_date = $chage_date;
+        $this->charge_date = $chargeDate;
     }
 
     /**
@@ -141,18 +141,25 @@ class Payment extends Model
     }
 
     /**
-     * @param int $transaction_fee
+     * @param int $transactionFee Amount must be in whole pence/cents
      */
-    public function setTransactionFee($transaction_fee)
+    public function setTransactionFee($transactionFee)
     {
-        $this->transaction_fee = $transaction_fee;
+        $this->transaction_fee = $transactionFee;
     }
 
+    /**
+     * @param string $key
+     * @param mixed $value
+     */
     public function addMetadata($key, $value)
     {
         $this->metadata[$key] = (string) $value;
     }
 
+    /**
+     * @param array $metadata
+     */
     public function setMetadata(array $metadata)
     {
         foreach ($metadata as $k => $v) {
@@ -161,19 +168,25 @@ class Payment extends Model
         $this->metadata = $metadata;
     }
 
+    /**
+     * @return array
+     */
     public function getMetadata()
     {
         return $this->metadata;
     }
 
     /**
-     * @return int
+     * @return int Amount is in whole pence/cents
      */
     public function getTransactionFee()
     {
         return $this->transaction_fee;
     }
 
+    /**
+     * @return array
+     */
     public function toArray()
     {
         $arr = parent::toArray();
@@ -182,7 +195,7 @@ class Payment extends Model
             unset($arr['mandate']);
         }
 
-        if ($this->getMandate()) {
+        if ($this->getMandate() instanceof Mandate) {
             $arr['links']['mandate'] = $this->getMandate()->getId();
         }
 

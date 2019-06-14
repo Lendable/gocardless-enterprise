@@ -1,15 +1,15 @@
 <?php
 
-namespace GoCardless\Enterprise;
+namespace Lendable\GoCardlessEnterprise;
 
-use GoCardless\Enterprise\Exceptions\ApiException;
-use GoCardless\Enterprise\Model\Creditor;
-use GoCardless\Enterprise\Model\CreditorBankAccount;
-use GoCardless\Enterprise\Model\Customer;
-use GoCardless\Enterprise\Model\CustomerBankAccount;
-use GoCardless\Enterprise\Model\Mandate;
-use GoCardless\Enterprise\Model\Model;
-use GoCardless\Enterprise\Model\Payment;
+use Lendable\GoCardlessEnterprise\Exceptions\ApiException;
+use Lendable\GoCardlessEnterprise\Model\Creditor;
+use Lendable\GoCardlessEnterprise\Model\CreditorBankAccount;
+use Lendable\GoCardlessEnterprise\Model\Customer;
+use Lendable\GoCardlessEnterprise\Model\CustomerBankAccount;
+use Lendable\GoCardlessEnterprise\Model\Mandate;
+use Lendable\GoCardlessEnterprise\Model\Model;
+use Lendable\GoCardlessEnterprise\Model\Payment;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\BadResponseException;
 
@@ -28,17 +28,12 @@ class Client
     /**
      * @var string
      */
-    protected $username;
+    protected $secret;
 
     /**
      * @var array
      */
     protected $defaultHeaders;
-
-    /**
-     * @var string
-     */
-    protected $password;
 
     const ENDPOINT_CUSTOMER = 'customers';
 
@@ -57,7 +52,7 @@ class Client
     /**
      * @param GuzzleClient $client
      * @param array $config
-     * ["baseUrl" => ?, "username" => ?, "webhook_secret" => ?, "token" => ?]
+     * ["baseUrl" => ?, "webhook_secret" => ?, "gocardlessVersion" => ?, "token" => ?]
      */
     public function __construct(GuzzleClient $client, array $config)
     {
@@ -66,7 +61,7 @@ class Client
         $this->secret = $config['webhook_secret'];
         $this->defaultHeaders = [
             'GoCardless-Version' => $config['gocardlessVersion'],
-            'Authorization' => 'Bearer '.$config['token']
+            'Authorization' => 'Bearer '.$config['token'],
         ];
     }
 
@@ -198,7 +193,7 @@ class Client
     public function getMandatePdf($id)
     {
         try {
-            $body = ['links' => ['mandate' => (string) $id]];
+            $body = ['links' => ['mandate' => $id]];
             $response = $this->post(self::ENDPOINT_MANDATE_PDF, $body);
 
             if (!array_key_exists('url', $response)) {

@@ -1,12 +1,14 @@
 <?php
 
 $finder = \PhpCsFixer\Finder::create()
-    ->in(__DIR__.'/GoCardless');
+    ->in(__DIR__.'/src')
+    ->in(__DIR__.'/tests');
 
 return \PhpCsFixer\Config::create()
     ->setRules(
         [
             '@PSR2' => true,
+            '@PHP56Migration' => true,
             '@DoctrineAnnotation' => true,
             'array_syntax' => ['syntax' => 'short'],
             'binary_operator_spaces' => true,
