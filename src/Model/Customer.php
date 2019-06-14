@@ -1,6 +1,6 @@
 <?php
 
-namespace GoCardless\Enterprise\Model;
+namespace Lendable\GoCardlessEnterprise\Model;
 
 class Customer extends Model
 {
@@ -65,11 +65,11 @@ class Customer extends Model
     protected $bankAccounts;
 
     /**
-     * @param string $address_line1
+     * @param string $addressLine1
      */
-    public function setAddressLine1($address_line1)
+    public function setAddressLine1($addressLine1)
     {
-        $this->address_line1 = $address_line1;
+        $this->address_line1 = $addressLine1;
     }
 
     /**
@@ -81,11 +81,11 @@ class Customer extends Model
     }
 
     /**
-     * @param string $address_line2
+     * @param string $addressLine2
      */
-    public function setAddressLine2($address_line2)
+    public function setAddressLine2($addressLine2)
     {
-        $this->address_line2 = $address_line2;
+        $this->address_line2 = $addressLine2;
     }
 
     /**
@@ -97,11 +97,11 @@ class Customer extends Model
     }
 
     /**
-     * @param string $address_line3
+     * @param string $addressLine3
      */
-    public function setAddressLine3($address_line3)
+    public function setAddressLine3($addressLine3)
     {
-        $this->address_line3 = $address_line3;
+        $this->address_line3 = $addressLine3;
     }
 
     /**
@@ -129,11 +129,11 @@ class Customer extends Model
     }
 
     /**
-     * @param string $country_code
+     * @param string $countryCode
      */
-    public function setCountryCode($country_code)
+    public function setCountryCode($countryCode)
     {
-        $this->country_code = $country_code;
+        $this->country_code = $countryCode;
     }
 
     /**
@@ -161,11 +161,11 @@ class Customer extends Model
     }
 
     /**
-     * @param string $family_name
+     * @param string $familyName
      */
-    public function setFamilyName($family_name)
+    public function setFamilyName($familyName)
     {
-        $this->family_name = $family_name;
+        $this->family_name = $familyName;
     }
 
     /**
@@ -177,11 +177,11 @@ class Customer extends Model
     }
 
     /**
-     * @param string $given_name
+     * @param string $givenName
      */
-    public function setGivenName($given_name)
+    public function setGivenName($givenName)
     {
-        $this->given_name = $given_name;
+        $this->given_name = $givenName;
     }
 
     /**
@@ -193,11 +193,11 @@ class Customer extends Model
     }
 
     /**
-     * @param string $organisation_name
+     * @param string $organisationName
      */
-    public function setOrganisationName($organisation_name)
+    public function setOrganisationName($organisationName)
     {
-        $this->organisation_name = $organisation_name;
+        $this->organisation_name = $organisationName;
     }
 
     /**
@@ -209,11 +209,11 @@ class Customer extends Model
     }
 
     /**
-     * @param string $postal_code
+     * @param string $postalCode
      */
-    public function setPostalCode($postal_code)
+    public function setPostalCode($postalCode)
     {
-        $this->postal_code = $postal_code;
+        $this->postal_code = $postalCode;
     }
 
     /**
@@ -256,6 +256,9 @@ class Customer extends Model
         return $this->bankAccounts;
     }
 
+    /**
+     * @return array
+     */
     public function toArray()
     {
         $arr = parent::toArray();

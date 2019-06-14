@@ -1,0 +1,14 @@
+build:
+  environment:
+    php: 7.2
+  tests:
+    override:
+      command: "composer run-tests"
+
+coding_style:
+  php:
+    spaces:
+      around_operators:
+        concatenation: false
+      other:
+        after_type_cast: true

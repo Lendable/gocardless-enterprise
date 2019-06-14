@@ -1,6 +1,6 @@
 <?php
 
-namespace GoCardless\Enterprise\Model;
+namespace Lendable\GoCardlessEnterprise\Model;
 
 class Payout extends Model
 {
@@ -66,7 +66,7 @@ class Payout extends Model
     }
 
     /**
-     * @param string $type
+     * @param string $payoutType
      */
     public function setPayoutType($payoutType)
     {
@@ -162,7 +162,7 @@ class Payout extends Model
     }
 
     /**
-     * @param \GoCardless\Enterprise\Model\Creditor $creditor
+     * @param Creditor $creditor
      */
     public function setCreditor($creditor)
     {
@@ -170,7 +170,7 @@ class Payout extends Model
     }
 
     /**
-     * @return \GoCardless\Enterprise\Model\Creditor
+     * @return Creditor
      */
     public function getCreditor()
     {
@@ -178,7 +178,7 @@ class Payout extends Model
     }
 
     /**
-     * @param \GoCardless\Enterprise\Model\CreditorBankAccount $creditorBankAccount
+     * @param CreditorBankAccount $creditorBankAccount
      */
     public function setCreditorBankAccount($creditorBankAccount)
     {
@@ -186,7 +186,7 @@ class Payout extends Model
     }
 
     /**
-     * @return \GoCardless\Enterprise\Model\CreditorBankAccount
+     * @return CreditorBankAccount
      */
     public function getCreditorBankAccount()
     {
@@ -201,7 +201,7 @@ class Payout extends Model
             unset($arr['creditor']);
         }
 
-        if ($this->getCreditor()) {
+        if ($this->getCreditor() instanceof Creditor) {
             $arr['links']['creditor'] = $this->getCreditor()->getId();
         }
 
@@ -209,7 +209,7 @@ class Payout extends Model
             unset($arr['creditor_bank_account']);
         }
 
-        if ($this->getCreditorBankAccount()) {
+        if ($this->getCreditorBankAccount() instanceof CreditorBankAccount) {
             $arr['links']['creditor_bank_account'] = $this->getCreditorBankAccount()->getId();
         }
 

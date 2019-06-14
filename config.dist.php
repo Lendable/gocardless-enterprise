@@ -5,5 +5,5 @@ return [
     "gocardlessVersion" => "2015-07-06",
     "token" => "",
     "webhook_secret" => "",
-    "creditorId" => ""
+    "creditorId" => "",
 ];

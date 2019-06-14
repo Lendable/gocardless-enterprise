@@ -1,16 +1,16 @@
 <?php
 
-namespace GoCardless\Enterprise;
+namespace Lendable\GoCardlessEnterprise;
 
-use GoCardless\Enterprise\Exceptions\ApiException;
-use GoCardless\Enterprise\Model\Creditor;
-use GoCardless\Enterprise\Model\CreditorBankAccount;
-use GoCardless\Enterprise\Model\Customer;
-use GoCardless\Enterprise\Model\CustomerBankAccount;
-use GoCardless\Enterprise\Model\Mandate;
-use GoCardless\Enterprise\Model\Model;
-use GoCardless\Enterprise\Model\Payment;
-use GoCardless\Enterprise\Model\Payout;
+use Lendable\GoCardlessEnterprise\Exceptions\ApiException;
+use Lendable\GoCardlessEnterprise\Model\Creditor;
+use Lendable\GoCardlessEnterprise\Model\CreditorBankAccount;
+use Lendable\GoCardlessEnterprise\Model\Customer;
+use Lendable\GoCardlessEnterprise\Model\CustomerBankAccount;
+use Lendable\GoCardlessEnterprise\Model\Mandate;
+use Lendable\GoCardlessEnterprise\Model\Model;
+use Lendable\GoCardlessEnterprise\Model\Payment;
+use Lendable\GoCardlessEnterprise\Model\Payout;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\BadResponseException;
 
@@ -29,17 +29,12 @@ class Client
     /**
      * @var string
      */
-    protected $username;
+    protected $secret;
 
     /**
      * @var array
      */
     protected $defaultHeaders;
-
-    /**
-     * @var string
-     */
-    protected $password;
 
     const ENDPOINT_CUSTOMER = 'customers';
 
@@ -60,7 +55,7 @@ class Client
     /**
      * @param GuzzleClient $client
      * @param array $config
-     * ["baseUrl" => ?, "username" => ?, "webhook_secret" => ?, "token" => ?]
+     * ["baseUrl" => ?, "gocardlessVersion" => ?, "webhook_secret" => ?, "token" => ?]
      */
     public function __construct(GuzzleClient $client, array $config)
     {
@@ -69,7 +64,7 @@ class Client
         $this->secret = $config['webhook_secret'];
         $this->defaultHeaders = [
             'GoCardless-Version' => $config['gocardlessVersion'],
-            'Authorization' => 'Bearer '.$config['token']
+            'Authorization' => sprintf('Bearer %s', $config['token']),
         ];
     }
 
@@ -196,12 +191,13 @@ class Client
     /**
      * @param string $id
      * @return string
+     * @throws \RuntimeException
      * @throws ApiException
      */
     public function getMandatePdf($id)
     {
         try {
-            $body = ['links' => ['mandate' => (string) $id]];
+            $body = ['links' => ['mandate' => $id]];
             $response = $this->post(self::ENDPOINT_MANDATE_PDF, $body);
 
             if (!array_key_exists('url', $response)) {
@@ -210,7 +206,7 @@ class Client
 
             $contents = file_get_contents($response['url']);
             if ($contents === false) {
-                return '';
+                throw new \RuntimeException(sprintf('Cannot read the file contents of %s', $response['url']));
             }
 
             return $contents;
@@ -323,6 +319,7 @@ class Client
         $parameters = array_merge($parameters, $options);
 
         $response = $this->get(self::ENDPOINT_PAYMENTS, $parameters);
+        /** @var Payment[] $payments */
         $payments = $this->responseToObjects($payment, $response);
 
         return $payments;
@@ -338,6 +335,7 @@ class Client
     {
         $parameters = array_filter(['after' => $after, 'before' => $before, 'limit' => $limit]);
         $response = $this->get(self::ENDPOINT_CREDITORS, $parameters);
+        /** @var Creditor[] $creditors */
         $creditors = $this->responseToObjects(new Creditor(), $response);
 
         return $creditors;
@@ -402,6 +400,7 @@ class Client
         $parameters = array_merge($parameters, $options);
 
         $response = $this->get(self::ENDPOINT_PAYOUT, $parameters);
+        /** @var Payout[] $payouts */
         $payouts = $this->responseToObjects($payout, $response);
 
         return $payouts;
@@ -431,7 +430,7 @@ class Client
      */
     protected function makeUrl($endpoint, $path = null)
     {
-        return $this->baseUrl.$endpoint.($path !== null ? '/'.$path : '');
+        return $this->baseUrl.$endpoint.(is_string($path) ? '/'.$path : '');
     }
 
     /**
