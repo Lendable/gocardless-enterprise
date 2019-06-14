@@ -52,7 +52,7 @@ class Client
     /**
      * @param GuzzleClient $client
      * @param array $config
-     * ["baseUrl" => ?, "webhook_secret" => ?, "gocardlessVersion" => ?, "token" => ?]
+     * ["baseUrl" => ?, "gocardlessVersion" => ?, "webhook_secret" => ?, "token" => ?]
      */
     public function __construct(GuzzleClient $client, array $config)
     {
@@ -61,7 +61,7 @@ class Client
         $this->secret = $config['webhook_secret'];
         $this->defaultHeaders = [
             'GoCardless-Version' => $config['gocardlessVersion'],
-            'Authorization' => 'Bearer '.$config['token'],
+            'Authorization' => sprintf('Bearer %s', $config['token']),
         ];
     }
 
@@ -188,6 +188,7 @@ class Client
     /**
      * @param string $id
      * @return string
+     * @throws \RuntimeException
      * @throws ApiException
      */
     public function getMandatePdf($id)
@@ -202,7 +203,7 @@ class Client
 
             $contents = file_get_contents($response['url']);
             if ($contents === false) {
-                return '';
+                throw new \RuntimeException(sprintf('Cannot read the file contents of %s', $response['url']));
             }
 
             return $contents;
@@ -315,6 +316,7 @@ class Client
         $parameters = array_merge($parameters, $options);
 
         $response = $this->get(self::ENDPOINT_PAYMENTS, $parameters);
+        /** @var Payment[] $payments */
         $payments = $this->responseToObjects($payment, $response);
 
         return $payments;
@@ -330,6 +332,7 @@ class Client
     {
         $parameters = array_filter(['after' => $after, 'before' => $before, 'limit' => $limit]);
         $response = $this->get(self::ENDPOINT_CREDITORS, $parameters);
+        /** @var Creditor[] $creditors */
         $creditors = $this->responseToObjects(new Creditor(), $response);
 
         return $creditors;
@@ -389,7 +392,7 @@ class Client
      */
     protected function makeUrl($endpoint, $path = null)
     {
-        return $this->baseUrl.$endpoint.($path !== null ? '/'.$path : '');
+        return $this->baseUrl.$endpoint.(is_string($path) ? '/'.$path : '');
     }
 
     /**
