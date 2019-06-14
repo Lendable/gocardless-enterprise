@@ -8,6 +8,7 @@ use Lendable\GoCardlessEnterprise\Model\Creditor;
 use Lendable\GoCardlessEnterprise\Model\Customer;
 use Lendable\GoCardlessEnterprise\Model\Mandate;
 use Lendable\GoCardlessEnterprise\Model\Payment;
+use Lendable\GoCardlessEnterprise\Model\Payout;
 use GuzzleHttp\Client as GuzzleClient;
 use PHPUnit\Framework\TestCase;
 
@@ -289,5 +290,33 @@ class ClientTest extends TestCase
         $mandate = $this->getClient()->cancelMandate($mandate);
 
         $this->assertEquals('cancelled', $mandate->getStatus());
+    }
+
+    public function testListPayouts()
+    {
+        $payouts = $this->getClient()->listPayouts();
+
+        $this->assertTrue(is_array($payouts));
+        foreach ($payouts as $payout) {
+            $this->assertInstanceOf(Payout::class, $payout);
+        }
+
+        $payout = reset($payouts);
+
+        return $payout;
+    }
+
+    /**
+     * @depends testListPayouts
+     * @param Payout $old
+     */
+    public function testGetPayout($old)
+    {
+        $new = $this->getClient()->getPayout($old->getId());
+
+        $newArray = $new->toArray();
+        $oldArray = $old->toArray();
+
+        $this->assertEquals($newArray, $oldArray);
     }
 }
