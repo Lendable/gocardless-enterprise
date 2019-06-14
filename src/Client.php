@@ -200,6 +200,7 @@ class Client
             if (!array_key_exists('url', $response)) {
                 return '';
             }
+
             $contents = file_get_contents($response['url']);
             if ($contents === false) {
                 throw new \RuntimeException(sprintf('Cannot read the file contents of %s', $response['url']));
@@ -397,11 +398,12 @@ class Client
     /**
      * @param string $endpoint
      * @param array $body
+     * @param string|null $path
      * @return array
      * @throws \RuntimeException
      * @throws ApiException
      */
-    protected function post($endpoint, array $body, $path = false)
+    protected function post($endpoint, array $body, $path = null)
     {
         try {
             $response = $this->client->request(
