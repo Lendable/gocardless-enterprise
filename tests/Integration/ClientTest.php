@@ -222,6 +222,7 @@ class ClientTest extends TestCase
         $payment->setCurrency('GBP');
         $payment->setDescription('test');
         $payment->setMandate($mandate);
+        $payment->setReference('1234567890');
 
         $payment = $this->getClient()->createPayment($payment);
 
@@ -229,6 +230,7 @@ class ClientTest extends TestCase
         $this->assertNotNull($payment->getCreatedAt());
         $this->assertEquals('pending_submission', $payment->getStatus());
         $this->assertNotNull($payment->getChargeDate());
+        $this->assertEquals('1234567890', $payment->getReference());
     }
 
     /**
@@ -243,6 +245,7 @@ class ClientTest extends TestCase
         $payment->setDescription('test');
         $payment->setMetadata(['payment_id' => 12]);
         $payment->setMandate($mandate);
+        $payment->setReference('1234567890');
 
         $payment = $this->getClient()->createPayment($payment);
 
@@ -252,6 +255,7 @@ class ClientTest extends TestCase
         $this->assertNotNull($payment->getChargeDate());
         $this->assertArrayHasKey('payment_id', $payment->getMetadata());
         $this->assertEquals(12, $payment->getMetadata()['payment_id']);
+        $this->assertEquals('1234567890', $payment->getReference());
     }
 
     public function testListPayments()
