@@ -12,11 +12,12 @@ php:
   - 7.1
   - 7.2
   - 7.3
-  - nightly
+  - 7.4
 
 env:
   global:
-    - LATEST_PHP_VERSION="7.3"
+    - PHP_7_3="7.3"
+    - PHP_7_4="7.4"
   matrix:
     - DEPENDENCIES="beta"
     - DEPENDENCIES="low"
@@ -25,7 +26,6 @@ env:
 matrix:
   fast_finish: true
   allow_failures:
-    - php: nightly
     - env: DEPENDENCIES="beta"
     - env: DEPENDENCIES="low"
     - env: SYMFONY_VERSION="dev-master"
@@ -39,7 +39,7 @@ before_install:
   - mkdir -p build/logs
 
 install:
-  - if [ "$(phpenv version-name)" != "$LATEST_PHP_VERSION" ]; then
+  - if [ "$(phpenv version-name)" != "$PHP_7_3" ] && [ "$(phpenv version-name)" != "$PHP_7_4" ]; then
       composer remove friendsofphp/php-cs-fixer phpstan/phpstan phpstan/phpstan-phpunit phpunit/phpunit --dev;
       composer require phpunit/phpunit "5.7.*" --dev;
     fi
@@ -53,22 +53,22 @@ install:
     fi;
 
 script:
-  - if [ "$(phpenv version-name)" != "$LATEST_PHP_VERSION" ]; then
+  - if [ "$(phpenv version-name)" != "$PHP_7_3" ] && [ "$(phpenv version-name)" != "$PHP_7_4" ]; then
       echo "File validation is skipped for older PHP versions";
     else
       composer validate-files;
     fi;
-  - if [ "$(phpenv version-name)" != "$LATEST_PHP_VERSION" ]; then
+  - if [ "$(phpenv version-name)" != "$PHP_7_3" ] && [ "$(phpenv version-name)" != "$PHP_7_4" ]; then
       echo "Static analysis is skipped for older PHP versions";
     else
       composer run-static-analysis-including-tests;
     fi;
-  - if [ "$(phpenv version-name)" != "$LATEST_PHP_VERSION" ]; then
+  - if [ "$(phpenv version-name)" != "$PHP_7_3" ] && [ "$(phpenv version-name)" != "$PHP_7_4" ]; then
       echo "Code style check is skipped for older PHP versions";
     else
       composer check-code-style;
     fi;
-  - if [ "$(phpenv version-name)" != "$LATEST_PHP_VERSION" ]; then
+  - if [ "$(phpenv version-name)" != "$PHP_7_3" ] && [ "$(phpenv version-name)" != "$PHP_7_4" ]; then
       echo "Security check is skipped for older PHP versions";
     else
       composer check-security;
@@ -76,7 +76,7 @@ script:
   - composer run-tests-with-clover
 
 after_script:
-  - if [ "$(phpenv version-name)" != "$LATEST_PHP_VERSION" ]; then
+  - if [ "$(phpenv version-name)" != "$PHP_7_3" ] && [ "$(phpenv version-name)" != "$PHP_7_4" ]; then
       echo "Coveralls report is skipped for older PHP versions";
     else
       bin/php-coveralls -v;
