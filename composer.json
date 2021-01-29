@@ -65,7 +65,7 @@
             "bin/phpunit tests/Integration/"
         ],
         "run-tests-with-clover": [
-            "XDEBUG_MODE=coverage bin/phpunit tests/Unit/ --coverage-clover build/logs/clover.xml"
+            "bin/phpunit tests/Unit/ --coverage-clover build/logs/clover.xml"
         ],
         "validate-files": [
             "bin/parallel-lint --exclude vendor --exclude bin ."
