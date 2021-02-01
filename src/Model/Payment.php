@@ -45,6 +45,11 @@ class Payment extends Model
     protected $metadata = [];
 
     /**
+     * @var string
+     */
+    protected $reference;
+
+    /**
      * @param int $amount Amount must be in whole pence/cents
      */
     public function setAmount($amount)
@@ -174,6 +179,22 @@ class Payment extends Model
     public function getMetadata()
     {
         return $this->metadata;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReference()
+    {
+        return $this->reference;
+    }
+
+    /**
+     * @param string $reference
+     */
+    public function setReference($reference)
+    {
+        $this->reference = $reference;
     }
 
     /**
