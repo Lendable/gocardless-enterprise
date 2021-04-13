@@ -474,22 +474,22 @@ class Client
             }
 
             return $responseArray[$endpoint];
-        } catch (BadResponseException $e) {
-            if ($this->isIdempotentCreationConflict($e)) {
-                throw IdempotentCreationConflictException::fromBadResponseException($e);
+        } catch (BadResponseException $exception) {
+            if ($this->isIdempotentCreationConflict($exception)) {
+                throw IdempotentCreationConflictException::fromBadResponseException($exception);
             }
 
-            throw ApiException::fromBadResponseException($e);
+            throw ApiException::fromBadResponseException($exception);
         }
     }
 
     /**
-     * @param BadResponseException $e
+     * @param BadResponseException $exception
      * @return bool
      */
-    private function isIdempotentCreationConflict(BadResponseException $e)
+    private function isIdempotentCreationConflict(BadResponseException $exception)
     {
-        $responseArray = json_decode((string) $e->getResponse()->getBody(), true);
+        $responseArray = json_decode((string) $exception->getResponse()->getBody(), true);
 
         if (!isset($responseArray['error']['errors'])) {
             return false;
@@ -533,8 +533,8 @@ class Client
             }
 
             return $responseArray[$endpoint];
-        } catch (BadResponseException $e) {
-            throw ApiException::fromBadResponseException($e);
+        } catch (BadResponseException $exception) {
+            throw ApiException::fromBadResponseException($exception);
         }
     }
 }
