@@ -268,11 +268,18 @@ class Client
 
     /**
      * @param Payment $payment
+     * @param string|null $idempotencyKey
      * @return Payment
      */
-    public function createPayment(Payment $payment)
+    public function createPayment(Payment $payment, $idempotencyKey = null)
     {
-        $response = $this->post(self::ENDPOINT_PAYMENTS, $payment->toArray());
+        $response = $this->post(
+            self::ENDPOINT_PAYMENTS,
+            $payment->toArray(),
+            null,
+            $idempotencyKey
+        );
+
         $payment->fromArray($response);
 
         return $payment;
@@ -437,18 +444,25 @@ class Client
      * @param string $endpoint
      * @param array $body
      * @param string|null $path
+     * @param string|null $idempotencyKey
      * @return array
      * @throws \RuntimeException
      * @throws ApiException
      */
-    protected function post($endpoint, array $body, $path = null)
+    protected function post($endpoint, array $body, $path = null, $idempotencyKey = null)
     {
+        $headers = array_merge($this->defaultHeaders, ['Content-Type' => 'application/vnd.api+json']);
+
+        if ($idempotencyKey !== null) {
+            $headers['Idempotency-Key'] = $idempotencyKey;
+        }
+
         try {
             $response = $this->client->request(
                 'POST',
                 $this->makeUrl($endpoint, $path),
                 [
-                    'headers' => array_merge($this->defaultHeaders, ['Content-Type' => 'application/vnd.api+json']),
+                    'headers' => $headers,
                     'body' => json_encode([$endpoint => $body])
                 ]
             );
