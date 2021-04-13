@@ -14,6 +14,7 @@ use Lendable\GoCardlessEnterprise\Model\Payment;
 use Lendable\GoCardlessEnterprise\Model\Payout;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\BadResponseException;
+use Psr\Http\Message\ResponseInterface;
 
 class Client
 {
@@ -489,7 +490,9 @@ class Client
      */
     private function isIdempotentCreationConflict(BadResponseException $exception)
     {
-        $responseArray = json_decode((string) $exception->getResponse()->getBody(), true);
+        $response = $exception->getResponse();
+        assert($response instanceof ResponseInterface);
+        $responseArray = json_decode((string) $response->getBody(), true);
 
         if (!isset($responseArray['error']['errors'])) {
             return false;
