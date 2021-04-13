@@ -3,6 +3,7 @@
 namespace Lendable\GoCardlessEnterprise;
 
 use Lendable\GoCardlessEnterprise\Exceptions\ApiException;
+use Lendable\GoCardlessEnterprise\Exceptions\IdempotentCreationConflictException;
 use Lendable\GoCardlessEnterprise\Model\Creditor;
 use Lendable\GoCardlessEnterprise\Model\CreditorBankAccount;
 use Lendable\GoCardlessEnterprise\Model\Customer;
@@ -13,6 +14,7 @@ use Lendable\GoCardlessEnterprise\Model\Payment;
 use Lendable\GoCardlessEnterprise\Model\Payout;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\BadResponseException;
+use Psr\Http\Message\ResponseInterface;
 
 class Client
 {
@@ -473,9 +475,42 @@ class Client
             }
 
             return $responseArray[$endpoint];
-        } catch (BadResponseException $e) {
-            throw ApiException::fromBadResponseException($e);
+        } catch (BadResponseException $exception) {
+            if ($this->isIdempotentCreationConflict($exception)) {
+                throw IdempotentCreationConflictException::fromBadResponseException($exception);
+            }
+
+            throw ApiException::fromBadResponseException($exception);
         }
+    }
+
+    /**
+     * @param BadResponseException $exception
+     * @return bool
+     */
+    private function isIdempotentCreationConflict(BadResponseException $exception)
+    {
+        $response = $exception->getResponse();
+        assert($response instanceof ResponseInterface);
+        $responseArray = json_decode((string) $response->getBody(), true);
+
+        if (!isset($responseArray['error']['errors'])) {
+            return false;
+        }
+
+        $errors = $responseArray['error']['errors'];
+
+        if (!is_array($errors)) {
+            return false;
+        }
+
+        foreach ($errors as $error) {
+            if (isset($error['reason']) && $error['reason'] === 'idempotent_creation_conflict') {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -501,8 +536,8 @@ class Client
             }
 
             return $responseArray[$endpoint];
-        } catch (BadResponseException $e) {
-            throw ApiException::fromBadResponseException($e);
+        } catch (BadResponseException $exception) {
+            throw ApiException::fromBadResponseException($exception);
         }
     }
 }

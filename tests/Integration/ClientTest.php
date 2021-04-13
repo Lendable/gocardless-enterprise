@@ -2,8 +2,8 @@
 
 namespace Lendable\GoCardlessEnterprise\Tests\Integration;
 
-use GuzzleHttp\Exception\RequestException;
 use Lendable\GoCardlessEnterprise\Client;
+use Lendable\GoCardlessEnterprise\Exceptions\IdempotentCreationConflictException;
 use Lendable\GoCardlessEnterprise\Model\CustomerBankAccount;
 use Lendable\GoCardlessEnterprise\Model\Creditor;
 use Lendable\GoCardlessEnterprise\Model\Customer;
@@ -282,10 +282,18 @@ class ClientTest extends TestCase
         $this->assertNotNull($payment->getChargeDate());
         $this->assertEquals('1234567890', $payment->getReference());
 
-        $this->expectException(RequestException::class);
-        $this->expectExceptionCode(409);
+        $retryPayment = new Payment();
+        $retryPayment->setAmount(10000);
+        $retryPayment->setCurrency('GBP');
+        $retryPayment->setDescription('test');
+        $retryPayment->setMandate($mandate);
+        $retryPayment->setReference('1234567890');
 
-        $this->getClient()->createPayment($payment, $idempotencyKey);
+        $this->expectException(IdempotentCreationConflictException::class);
+        $this->expectExceptionCode(409);
+        $this->expectExceptionMessage('A resource has already been created with this idempotency key');
+
+        $this->getClient()->createPayment($retryPayment, $idempotencyKey);
     }
 
     public function testListPayments()
