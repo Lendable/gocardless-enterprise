@@ -3,6 +3,7 @@
 namespace Lendable\GoCardlessEnterprise;
 
 use Lendable\GoCardlessEnterprise\Exceptions\ApiException;
+use Lendable\GoCardlessEnterprise\Exceptions\IdempotentCreationConflictException;
 use Lendable\GoCardlessEnterprise\Model\Creditor;
 use Lendable\GoCardlessEnterprise\Model\CreditorBankAccount;
 use Lendable\GoCardlessEnterprise\Model\Customer;
@@ -474,8 +475,39 @@ class Client
 
             return $responseArray[$endpoint];
         } catch (BadResponseException $e) {
+            if ($this->isIdempotentCreationConflict($e)) {
+                throw IdempotentCreationConflictException::fromBadResponseException($e);
+            }
+
             throw ApiException::fromBadResponseException($e);
         }
+    }
+
+    /**
+     * @param BadResponseException $e
+     * @return bool
+     */
+    private function isIdempotentCreationConflict(BadResponseException $e)
+    {
+        $responseArray = json_decode((string) $e->getResponse()->getBody(), true);
+
+        if (!isset($responseArray['error']['errors'])) {
+            return false;
+        }
+
+        $errors = $responseArray['error']['errors'];
+
+        if (!is_array($errors)) {
+            return false;
+        }
+
+        foreach ($errors as $error) {
+            if (isset($error['reason']) && $error['reason'] === 'idempotent_creation_conflict') {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
