@@ -2,7 +2,6 @@
 
 namespace Lendable\GoCardlessEnterprise\Tests\Integration;
 
-use GuzzleHttp\Exception\RequestException;
 use Lendable\GoCardlessEnterprise\Client;
 use Lendable\GoCardlessEnterprise\Exceptions\IdempotentCreationConflictException;
 use Lendable\GoCardlessEnterprise\Model\CustomerBankAccount;
