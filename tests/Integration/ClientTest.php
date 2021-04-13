@@ -340,7 +340,6 @@ class ClientTest extends TestCase
         $payouts = $this->getClient()->listPayouts();
 
         $this->assertTrue(is_array($payouts));
-
         foreach ($payouts as $payout) {
             $this->assertInstanceOf(Payout::class, $payout);
         }
