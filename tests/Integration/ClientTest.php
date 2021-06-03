@@ -339,6 +339,11 @@ class ClientTest extends TestCase
         $payouts = $this->getClient()->listPayouts();
 
         $this->assertTrue(is_array($payouts));
+
+        if (0 === count($payouts)) {
+            $this->markTestSkipped('No payouts were received from client');
+        }
+
         foreach ($payouts as $payout) {
             $this->assertInstanceOf(Payout::class, $payout);
         }
