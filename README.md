@@ -1,4 +1,4 @@
-[![Build Status](https://api.travis-ci.org/Lendable/gocardless-enterprise.svg)](https://travis-ci.org/Lendable/gocardless-enterprise)
+[![Build Status](https://api.travis-ci.com/Lendable/gocardless-enterprise.svg)](https://travis-ci.com/Lendable/gocardless-enterprise)
 
 # Unofficial integration with GoCardless Enterprise API
 Client library for the GoCardless Enterprise API
@@ -17,4 +17,5 @@ You will need to create a config.php with the configuration settings (a [dist fi
 
 After adding the configuration, run the unit tests:
 
-    $ php vendor/bin/phpunit
+    $ composer run-tests
+    $ composer run-integration-tests

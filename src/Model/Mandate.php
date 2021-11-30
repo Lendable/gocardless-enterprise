@@ -29,14 +29,11 @@ class Mandate extends Model
      */
     protected $creditor;
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         $arr = parent::toArray();
 
-        if (array_key_exists('customerBankAccount', $arr)) {
+        if (\array_key_exists('customerBankAccount', $arr)) {
             unset($arr['customerBankAccount']);
         }
 
@@ -44,7 +41,7 @@ class Mandate extends Model
             $arr['links']['customer_bank_account'] = $this->getCustomerBankAccount()->getId();
         }
 
-        if (array_key_exists('creditor', $arr)) {
+        if (\array_key_exists('creditor', $arr)) {
             unset($arr['creditor']);
         }
 
@@ -55,82 +52,52 @@ class Mandate extends Model
         return $arr;
     }
 
-    /**
-     * @param CustomerBankAccount $bankAccount
-     */
     public function setCustomerBankAccount(CustomerBankAccount $bankAccount)
     {
         $this->customerBankAccount = $bankAccount;
     }
 
-    /**
-     * @return CustomerBankAccount
-     */
-    public function getCustomerBankAccount()
+    public function getCustomerBankAccount(): CustomerBankAccount
     {
         return $this->customerBankAccount;
     }
 
-    /**
-     * @param string $reference
-     */
-    public function setReference($reference)
+    public function setReference(string $reference)
     {
         $this->reference = $reference;
     }
 
-    /**
-     * @return string
-     */
-    public function getReference()
+    public function getReference(): string
     {
         return $this->reference;
     }
 
-    /**
-     * @param string $scheme
-     */
-    public function setScheme($scheme)
+    public function setScheme(string $scheme)
     {
         $this->scheme = $scheme;
     }
 
-    /**
-     * @return string
-     */
-    public function getScheme()
+    public function getScheme(): string
     {
         return $this->scheme;
     }
 
-    /**
-     * @param string $status
-     */
-    public function setStatus($status)
+    public function setStatus(string $status)
     {
         $this->status = $status;
     }
 
-    /**
-     * @return string
-     */
-    public function getStatus()
+    public function getStatus(): string
     {
         return $this->status;
     }
 
-    /**
-     * @param Creditor $creditor
-     */
     public function setCreditor(Creditor $creditor)
     {
         $this->creditor = $creditor;
     }
 
-    /**
-     * @return Creditor
-     */
-    public function getCreditor()
+    public function getCreditor(): Creditor
     {
         return $this->creditor;
     }

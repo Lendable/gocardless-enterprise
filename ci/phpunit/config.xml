@@ -5,18 +5,18 @@
         convertNoticesToExceptions="false"
         convertWarningsToExceptions="true"
         stopOnFailure="false"
-        bootstrap="vendor/autoload.php"
+        bootstrap="../../vendor/autoload.php"
         verbose="true">
 
     <testsuites>
-        <testsuite name="Lendable's GoCardless Enterprise Test Suite">
-            <directory>./tests</directory>
+        <testsuite name="Lendable's GoCardlessEnterprise Test Suite">
+            <directory>../../tests</directory>
         </testsuite>
     </testsuites>
 
     <filter>
-        <whitelist>
-            <directory suffix=".php">./src</directory>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">../../src</directory>
         </whitelist>
     </filter>
 

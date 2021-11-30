@@ -2,21 +2,21 @@
 
 namespace Lendable\GoCardlessEnterprise\Tests\Unit;
 
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Psr7\Stream;
 use Lendable\GoCardlessEnterprise\Client;
 use Lendable\GoCardlessEnterprise\Model\CreditorBankAccount;
-use GuzzleHttp\Psr7\Stream;
-use GuzzleHttp\Client as GuzzleClient;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
 class ClientTest extends TestCase
 {
-    const BASE_URL = 'https://api-sandbox.gocardless.com/';
-    const VERSION = '2015-07-06';
-    const CREDITOR_ID = 'AAAAAAAAAAAA';
-    const WEBHOOK_SECRET = 'BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB';
-    const TOKEN = 'CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC';
+    private const BASE_URL = 'https://api-sandbox.gocardless.com/';
+    private const VERSION = '2015-07-06';
+    private const CREDITOR_ID = 'AAAAAAAAAAAA';
+    private const WEBHOOK_SECRET = 'BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB';
+    private const TOKEN = 'CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC';
 
     /**
      * @var Client
@@ -28,7 +28,7 @@ class ClientTest extends TestCase
      */
     private $guzzleClient;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -114,7 +114,7 @@ JSON
         $this->assertSame(['creditor' => 'CR123'], $account->getLinks());
     }
 
-    private function getDefaultHeaders()
+    private function getDefaultHeaders(): array
     {
         return [
             'GoCardless-Version' => static::VERSION,
@@ -123,15 +123,15 @@ JSON
         ];
     }
 
-    private function createExpectedBodyFromJsonString($json)
+    private function createExpectedBodyFromJsonString(string $json)
     {
-        return json_encode(json_decode($json, true));
+        return \json_encode(\json_decode($json, true));
     }
 
     private function mockGuzzleJsonResponse(array $data)
     {
-        $streamContent = json_encode($data);
-        assert(is_string($streamContent));
+        $streamContent = \json_encode($data);
+        \assert(\is_string($streamContent));
         $response = $this->createMock(ResponseInterface::class);
         $response
             ->method('getBody')
@@ -140,18 +140,14 @@ JSON
         return $response;
     }
 
-    /**
-     * @param string $content
-     * @return Stream
-     */
-    private function createStream($content)
+    private function createStream(string $content): Stream
     {
-        $handle = fopen('php://memory', 'rb+');
+        $handle = \fopen('php://memory', 'rb+');
 
-        assert(is_resource($handle));
+        \assert(\is_resource($handle));
 
-        fwrite($handle, $content);
-        rewind($handle);
+        \fwrite($handle, $content);
+        \rewind($handle);
 
         return new Stream($handle);
     }

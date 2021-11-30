@@ -49,146 +49,92 @@ class CreditorBankAccount extends Model
      */
     protected $iban;
 
-    /**
-     * @param string $accountHolderName
-     */
-    public function setAccountHolderName($accountHolderName)
+    public function setAccountHolderName(string $accountHolderName)
     {
         $this->account_holder_name = $accountHolderName;
     }
 
-    /**
-     * @return string
-     */
-    public function getAccountHolderName()
+    public function getAccountHolderName(): string
     {
         return $this->account_holder_name;
     }
 
-    /**
-     * @param string $accountNumber
-     */
-    public function setAccountNumber($accountNumber)
+    public function setAccountNumber(string $accountNumber)
     {
         $this->account_number = $accountNumber;
     }
 
-    /**
-     * @return string
-     */
-    public function getAccountNumber()
+    public function getAccountNumber(): string
     {
         return $this->account_number;
     }
 
-    /**
-     * @param string $accountNumberEnding
-     */
-    public function setAccountNumberEnding($accountNumberEnding)
+    public function setAccountNumberEnding(string $accountNumberEnding)
     {
         $this->account_number_ending = $accountNumberEnding;
     }
 
-    /**
-     * @return string
-     */
-    public function getAccountNumberEnding()
+    public function getAccountNumberEnding(): string
     {
         return $this->account_number_ending;
     }
 
-    /**
-     * @param string $bankName
-     */
-    public function setBankName($bankName)
+    public function setBankName(string $bankName)
     {
         $this->bank_name = $bankName;
     }
 
-    /**
-     * @return string
-     */
-    public function getBankName()
+    public function getBankName(): string
     {
         return $this->bank_name;
     }
 
-    /**
-     * @param string $countryCode
-     */
-    public function setCountryCode($countryCode)
+    public function setCountryCode(string $countryCode)
     {
         $this->country_code = $countryCode;
     }
 
-    /**
-     * @return string
-     */
-    public function getCountryCode()
+    public function getCountryCode(): string
     {
         return $this->country_code;
     }
 
-    /**
-     * @param string $currency
-     */
-    public function setCurrency($currency)
+    public function setCurrency(string $currency)
     {
         $this->currency = $currency;
     }
 
-    /**
-     * @return string
-     */
-    public function getCurrency()
+    public function getCurrency(): string
     {
         return $this->currency;
     }
 
-    /**
-     * @param string $sortCode
-     */
-    public function setSortCode($sortCode)
+    public function setSortCode(string $sortCode)
     {
         $this->sort_code = $sortCode;
     }
 
-    /**
-     * @return string
-     */
-    public function getSortCode()
+    public function getSortCode(): string
     {
         return $this->sort_code;
     }
 
-    /**
-     * @param string $bankCode
-     */
-    public function setBankCode($bankCode)
+    public function setBankCode(string $bankCode)
     {
         $this->bank_code = $bankCode;
     }
 
-    /**
-     * @return string
-     */
-    public function getBankCode()
+    public function getBankCode(): string
     {
         return $this->bank_code;
     }
 
-    /**
-     * @param string $iban
-     */
-    public function setIban($iban)
+    public function setIban(string $iban)
     {
         $this->iban = $iban;
     }
 
-    /**
-     * @return string
-     */
-    public function getIban()
+    public function getIban(): string
     {
         return $this->iban;
     }

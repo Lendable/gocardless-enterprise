@@ -2,20 +2,20 @@
 
 namespace Lendable\GoCardlessEnterprise\Tests\Integration;
 
+use GuzzleHttp\Client as GuzzleClient;
 use Lendable\GoCardlessEnterprise\Client;
 use Lendable\GoCardlessEnterprise\Exceptions\IdempotentCreationConflictException;
-use Lendable\GoCardlessEnterprise\Model\CustomerBankAccount;
 use Lendable\GoCardlessEnterprise\Model\Creditor;
 use Lendable\GoCardlessEnterprise\Model\Customer;
+use Lendable\GoCardlessEnterprise\Model\CustomerBankAccount;
 use Lendable\GoCardlessEnterprise\Model\Mandate;
 use Lendable\GoCardlessEnterprise\Model\Payment;
 use Lendable\GoCardlessEnterprise\Model\Payout;
-use GuzzleHttp\Client as GuzzleClient;
 use PHPUnit\Framework\TestCase;
 
 class ClientTest extends TestCase
 {
-    protected $config;
+    private ?array $config = null;
 
     protected function getClient()
     {
@@ -33,12 +33,12 @@ class ClientTest extends TestCase
         return new Client(new GuzzleClient(), $this->config);
     }
 
-    public function testCreateCustomer()
+    public function test_create_customer()
     {
         $client = $this->getClient();
 
         $customer = new Customer();
-        $customer->setEmail('phpunit+'.time().substr(uniqid('test', true), 0, 3).'@example.com');
+        $customer->setEmail('phpunit+'.\time().\substr(\uniqid('test', true), 0, 3).'@example.com');
         $customer->setGivenName('Php');
         $customer->setFamilyName('Unit');
         $customer->setAddressLine1('Apt 1');
@@ -52,24 +52,22 @@ class ClientTest extends TestCase
         $this->assertNotEquals(null, $customer->getCreatedAt());
     }
 
-    public function testListCustomers()
+    public function test_list_customers()
     {
         $client = $this->getClient();
         $customers = $client->listCustomers();
-        $this->assertTrue(is_array($customers));
+        $this->assertTrue(\is_array($customers));
         foreach ($customers as $customer) {
             $this->assertInstanceOf(Customer::class, $customer);
         }
-        $customer = reset($customers);
 
-        return $customer;
+        return \reset($customers);
     }
 
     /**
-     * @depends testListCustomers
-     * @param Customer $old
+     * @depends test_list_customers
      */
-    public function testGetCustomer(Customer $old)
+    public function test_get_customer(Customer $old)
     {
         $new = $this->getClient()->getCustomer($old->getId());
 
@@ -80,10 +78,9 @@ class ClientTest extends TestCase
     }
 
     /**
-     * @depends testListCustomers
-     * @param Customer $customer
+     * @depends test_list_customers
      */
-    public function testCreateCustomerBankAccount(Customer $customer)
+    public function test_create_customer_bank_account(Customer $customer)
     {
         $account = new CustomerBankAccount();
         $account->setAccountNumber('55779911');
@@ -98,25 +95,22 @@ class ClientTest extends TestCase
         $this->assertNotEquals(null, $account->getCreatedAt());
     }
 
-    public function testListCustomerBankAccounts()
+    public function test_list_customer_bank_accounts()
     {
         $accounts = $this->getClient()->listCustomerBankAccounts();
 
-        $this->assertTrue(is_array($accounts));
+        $this->assertTrue(\is_array($accounts));
         foreach ($accounts as $account) {
             $this->assertInstanceOf(CustomerBankAccount::class, $account);
         }
 
-        $account = reset($accounts);
-
-        return $account;
+        return \reset($accounts);
     }
 
     /**
-     * @depends testListCustomerBankAccounts
-     * @param CustomerBankAccount $old
+     * @depends test_list_customer_bank_accounts
      */
-    public function testGetCustomerBankAccount($old)
+    public function test_get_customer_bank_account(CustomerBankAccount $old)
     {
         $new = $this->getClient()->getCustomerBankAccount($old->getId());
 
@@ -126,25 +120,22 @@ class ClientTest extends TestCase
         $this->assertEquals($newArray, $oldArray);
     }
 
-    public function testListCreditors()
+    public function test_list_creditors()
     {
         $creditors = $this->getClient()->listCreditors();
 
-        $this->assertTrue(is_array($creditors));
+        $this->assertTrue(\is_array($creditors));
         foreach ($creditors as $creditor) {
             $this->assertInstanceOf(Creditor::class, $creditor);
         }
 
-        $creditor = reset($creditors);
-
-        return $creditor;
+        return \reset($creditors);
     }
 
     /**
-     * @depends testListCreditors
-     * @param Creditor $old
+     * @depends test_list_creditors
      */
-    public function testGetCreditor($old)
+    public function test_get_creditor(Creditor $old)
     {
         $new = $this->getClient()->getCreditor($old->getId());
 
@@ -155,11 +146,10 @@ class ClientTest extends TestCase
     }
 
     /**
-     * @depends testListCustomerBankAccounts
-     * @depends testListCreditors
-     * @param CustomerBankAccount $account
+     * @depends test_list_customer_bank_accounts
+     * @depends test_list_creditors
      */
-    public function testCreateMandate(CustomerBankAccount $account, Creditor $creditor)
+    public function test_create_mandate(CustomerBankAccount $account, Creditor $creditor)
     {
         $mandate = new Mandate();
         $mandate->setCustomerBankAccount($account);
@@ -173,25 +163,22 @@ class ClientTest extends TestCase
         $this->assertNotNull($mandate->getCreatedAt());
     }
 
-    public function testListMandates()
+    public function test_list_mandates()
     {
         $mandates = $this->getClient()->listMandates();
 
-        $this->assertTrue(is_array($mandates));
+        $this->assertTrue(\is_array($mandates));
         foreach ($mandates as $mandate) {
             $this->assertInstanceOf(Mandate::class, $mandate);
         }
 
-        $mandate = reset($mandates);
-
-        return $mandate;
+        return \reset($mandates);
     }
 
     /**
-     * @depends testListMandates
-     * @param Mandate $old
+     * @depends test_list_mandates
      */
-    public function testGetMandate($old)
+    public function test_get_mandate(Mandate $old)
     {
         $new = $this->getClient()->getMandate($old->getId());
 
@@ -202,21 +189,19 @@ class ClientTest extends TestCase
     }
 
     /**
-     * @depends testListMandates
-     * @param Mandate $old
+     * @depends test_list_mandates
      */
-    public function testGetMandatePdf($old)
+    public function test_get_mandate_pdf(Mandate $old)
     {
         $mandate = $this->getClient()->getMandatePdf($old->getId());
 
-        $this->assertEquals('%PDF', substr($mandate, 0, 4));
+        $this->assertEquals('%PDF', \substr($mandate, 0, 4));
     }
 
     /**
-     * @depends testListMandates
-     * @param Mandate $mandate
+     * @depends test_list_mandates
      */
-    public function testCreatePayment(Mandate $mandate)
+    public function test_create_payment(Mandate $mandate)
     {
         $payment = new Payment();
         $payment->setAmount(10000);
@@ -235,10 +220,9 @@ class ClientTest extends TestCase
     }
 
     /**
-     * @depends testListMandates
-     * @param Mandate $mandate
+     * @depends test_list_mandates
      */
-    public function testCreatePaymentWithMetadata(Mandate $mandate)
+    public function test_create_payment_with_metadata(Mandate $mandate)
     {
         $payment = new Payment();
         $payment->setAmount(10000);
@@ -260,12 +244,11 @@ class ClientTest extends TestCase
     }
 
     /**
-     * @depends testListMandates
-     * @param Mandate $mandate
+     * @depends test_list_mandates
      */
-    public function testCreatePaymentWithIdempotencyKey(Mandate $mandate)
+    public function test_create_payment_with_idempotency_key(Mandate $mandate)
     {
-        $idempotencyKey = 'key'.uniqid();
+        $idempotencyKey = 'key'.\uniqid();
 
         $payment = new Payment();
         $payment->setAmount(10000);
@@ -296,24 +279,21 @@ class ClientTest extends TestCase
         $this->getClient()->createPayment($retryPayment, $idempotencyKey);
     }
 
-    public function testListPayments()
+    public function test_list_payments()
     {
         $payments = $this->getClient()->listPayments();
-        $this->assertTrue(is_array($payments));
+        $this->assertTrue(\is_array($payments));
         foreach ($payments as $payment) {
             $this->assertInstanceOf(Payment::class, $payment);
         }
 
-        $payment = reset($payments);
-
-        return $payment;
+        return \reset($payments);
     }
 
     /**
-     * @depends testListPayments
-     * @param Payment $old
+     * @depends test_list_payments
      */
-    public function testGetPayment($old)
+    public function test_get_payment(Payment $old)
     {
         $new = $this->getClient()->getPayment($old->getId());
 
@@ -324,35 +304,31 @@ class ClientTest extends TestCase
     }
 
     /**
-     * @depends testListMandates
-     * @param Mandate $mandate
+     * @depends test_list_mandates
      */
-    public function testCancelMandate($mandate)
+    public function test_cancel_mandate(Mandate $mandate)
     {
         $mandate = $this->getClient()->cancelMandate($mandate);
 
         $this->assertEquals('cancelled', $mandate->getStatus());
     }
 
-    public function testListPayouts()
+    public function test_list_payouts()
     {
         $payouts = $this->getClient()->listPayouts();
 
-        $this->assertTrue(is_array($payouts));
+        $this->assertTrue(\is_array($payouts));
         foreach ($payouts as $payout) {
             $this->assertInstanceOf(Payout::class, $payout);
         }
 
-        $payout = reset($payouts);
-
-        return $payout;
+        return \reset($payouts);
     }
 
     /**
-     * @depends testListPayouts
-     * @param Payout $old
+     * @depends test_list_payouts
      */
-    public function testGetPayout($old)
+    public function test_get_payout(Payout $old)
     {
         $new = $this->getClient()->getPayout($old->getId());
 

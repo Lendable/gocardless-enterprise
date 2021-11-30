@@ -64,205 +64,130 @@ class Customer extends Model
      */
     protected $bankAccounts;
 
-    /**
-     * @param string $addressLine1
-     */
-    public function setAddressLine1($addressLine1)
+    public function setAddressLine1(string $addressLine1)
     {
         $this->address_line1 = $addressLine1;
     }
 
-    /**
-     * @return string
-     */
-    public function getAddressLine1()
+    public function getAddressLine1(): string
     {
         return $this->address_line1;
     }
 
-    /**
-     * @param string $addressLine2
-     */
-    public function setAddressLine2($addressLine2)
+    public function setAddressLine2(string $addressLine2)
     {
         $this->address_line2 = $addressLine2;
     }
 
-    /**
-     * @return string
-     */
-    public function getAddressLine2()
+    public function getAddressLine2(): string
     {
         return $this->address_line2;
     }
 
-    /**
-     * @param string $addressLine3
-     */
-    public function setAddressLine3($addressLine3)
+    public function setAddressLine3(string $addressLine3)
     {
         $this->address_line3 = $addressLine3;
     }
 
-    /**
-     * @return string
-     */
-    public function getAddressLine3()
+    public function getAddressLine3(): string
     {
         return $this->address_line3;
     }
 
-    /**
-     * @param string $city
-     */
-    public function setCity($city)
+    public function setCity(string $city)
     {
         $this->city = $city;
     }
 
-    /**
-     * @return string
-     */
-    public function getCity()
+    public function getCity(): string
     {
         return $this->city;
     }
 
-    /**
-     * @param string $countryCode
-     */
-    public function setCountryCode($countryCode)
+    public function setCountryCode(string $countryCode)
     {
         $this->country_code = $countryCode;
     }
 
-    /**
-     * @return string
-     */
-    public function getCountryCode()
+    public function getCountryCode(): string
     {
         return $this->country_code;
     }
 
-    /**
-     * @param string $email
-     */
-    public function setEmail($email)
+    public function setEmail(string $email)
     {
         $this->email = $email;
     }
 
-    /**
-     * @return string
-     */
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->email;
     }
 
-    /**
-     * @param string $familyName
-     */
-    public function setFamilyName($familyName)
+    public function setFamilyName(string $familyName)
     {
         $this->family_name = $familyName;
     }
 
-    /**
-     * @return string
-     */
-    public function getFamilyName()
+    public function getFamilyName(): string
     {
         return $this->family_name;
     }
 
-    /**
-     * @param string $givenName
-     */
-    public function setGivenName($givenName)
+    public function setGivenName(string $givenName)
     {
         $this->given_name = $givenName;
     }
 
-    /**
-     * @return string
-     */
-    public function getGivenName()
+    public function getGivenName(): string
     {
         return $this->given_name;
     }
 
-    /**
-     * @param string $organisationName
-     */
-    public function setOrganisationName($organisationName)
+    public function setOrganisationName(string $organisationName)
     {
         $this->organisation_name = $organisationName;
     }
 
-    /**
-     * @return string
-     */
-    public function getOrganisationName()
+    public function getOrganisationName(): string
     {
         return $this->organisation_name;
     }
 
-    /**
-     * @param string $postalCode
-     */
-    public function setPostalCode($postalCode)
+    public function setPostalCode(string $postalCode)
     {
         $this->postal_code = $postalCode;
     }
 
-    /**
-     * @return string
-     */
-    public function getPostalCode()
+    public function getPostalCode(): string
     {
         return $this->postal_code;
     }
 
-    /**
-     * @param string $region
-     */
-    public function setRegion($region)
+    public function setRegion(string $region)
     {
         $this->region = $region;
     }
 
-    /**
-     * @return string
-     */
-    public function getRegion()
+    public function getRegion(): string
     {
         return $this->region;
     }
 
-    /**
-     * @param array $bankAccounts
-     */
-    public function setBankAccounts($bankAccounts)
+    public function setBankAccounts(array $bankAccounts)
     {
         $this->bankAccounts = $bankAccounts;
     }
 
-    /**
-     * @return array
-     */
-    public function getBankAccounts()
+    public function getBankAccounts(): array
     {
         return $this->bankAccounts;
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         $arr = parent::toArray();
-        if (array_key_exists('bankAccounts', $arr)) {
+        if (\array_key_exists('bankAccounts', $arr)) {
             unset($arr['bankAccounts']);
         }
 

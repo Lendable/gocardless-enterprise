@@ -54,162 +54,102 @@ class Creditor extends Model
      */
     protected $eur_payout_account;
 
-    /**
-     * @param string $addressLine1
-     */
-    public function setAddressLine1($addressLine1)
+    public function setAddressLine1(string $addressLine1)
     {
         $this->address_line1 = $addressLine1;
     }
 
-    /**
-     * @return string
-     */
-    public function getAddressLine1()
+    public function getAddressLine1(): string
     {
         return $this->address_line1;
     }
 
-    /**
-     * @param string $addressLine2
-     */
-    public function setAddressLine2($addressLine2)
+    public function setAddressLine2(string $addressLine2)
     {
         $this->address_line2 = $addressLine2;
     }
 
-    /**
-     * @return string
-     */
-    public function getAddressLine2()
+    public function getAddressLine2(): string
     {
         return $this->address_line2;
     }
 
-    /**
-     * @param string $addressLine3
-     */
-    public function setAddressLine3($addressLine3)
+    public function setAddressLine3(string $addressLine3)
     {
         $this->address_line3 = $addressLine3;
     }
 
-    /**
-     * @return string
-     */
-    public function getAddressLine3()
+    public function getAddressLine3(): string
     {
         return $this->address_line3;
     }
 
-    /**
-     * @param string $city
-     */
-    public function setCity($city)
+    public function setCity(string $city)
     {
         $this->city = $city;
     }
 
-    /**
-     * @return string
-     */
-    public function getCity()
+    public function getCity(): string
     {
         return $this->city;
     }
 
-    /**
-     * @param string $countryCode
-     */
-    public function setCountryCode($countryCode)
+    public function setCountryCode(string $countryCode)
     {
         $this->country_code = $countryCode;
     }
 
-    /**
-     * @return string
-     */
-    public function getCountryCode()
+    public function getCountryCode(): string
     {
         return $this->country_code;
     }
 
-    /**
-     * @param CreditorBankAccount $eurPayoutAccount
-     */
     public function setEurPayoutAccount(CreditorBankAccount $eurPayoutAccount)
     {
         $this->eur_payout_account = $eurPayoutAccount;
     }
 
-    /**
-     * @return CreditorBankAccount
-     */
-    public function getEurPayoutAccount()
+    public function getEurPayoutAccount(): CreditorBankAccount
     {
         return $this->eur_payout_account;
     }
 
-    /**
-     * @param CreditorBankAccount $gbpPayoutAccount
-     */
     public function setGbpPayoutAccount(CreditorBankAccount $gbpPayoutAccount)
     {
         $this->gbp_payout_account = $gbpPayoutAccount;
     }
 
-    /**
-     * @return CreditorBankAccount
-     */
-    public function getGbpPayoutAccount()
+    public function getGbpPayoutAccount(): CreditorBankAccount
     {
         return $this->gbp_payout_account;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $postalCode
-     */
-    public function setPostalCode($postalCode)
+    public function setPostalCode(string $postalCode)
     {
         $this->postal_code = $postalCode;
     }
 
-    /**
-     * @return string
-     */
-    public function getPostalCode()
+    public function getPostalCode(): string
     {
         return $this->postal_code;
     }
 
-    /**
-     * @param string $region
-     */
-    public function setRegion($region)
+    public function setRegion(string $region)
     {
         $this->region = $region;
     }
 
-    /**
-     * @return string
-     */
-    public function getRegion()
+    public function getRegion(): string
     {
         return $this->region;
     }

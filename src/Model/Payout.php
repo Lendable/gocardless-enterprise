@@ -49,155 +49,101 @@ class Payout extends Model
      */
     protected $creditor_bank_account;
 
-    /**
-     * @param string $status
-     */
-    public function setStatus($status)
+    public function setStatus(string $status)
     {
         $this->status = $status;
     }
 
-    /**
-     * @return string
-     */
-    public function getStatus()
+    public function getStatus(): string
     {
         return $this->status;
     }
 
-    /**
-     * @param string $payoutType
-     */
-    public function setPayoutType($payoutType)
+    public function setPayoutType(string $payoutType)
     {
         $this->payout_type = $payoutType;
     }
 
-    /**
-     * @return string
-     */
-    public function getPayoutType()
+    public function getPayoutType(): string
     {
         return $this->payout_type;
     }
 
-    /**
-     * @param string $reference
-     */
-    public function setReference($reference)
+    public function setReference(string $reference)
     {
         $this->reference = $reference;
     }
 
-    /**
-     * @return string
-     */
-    public function getReference()
+    public function getReference(): string
     {
         return $this->reference;
     }
 
-    /**
-     * @param int $deductedFees
-     */
-    public function setDeductedFees($deductedFees)
+    public function setDeductedFees(int $deductedFees)
     {
         $this->deducted_fees = $deductedFees;
     }
 
-    /**
-     * @return int
-     */
-    public function getDeductedFees()
+    public function getDeductedFees(): int
     {
         return $this->deducted_fees;
     }
 
-    /**
-     * @param int $amount
-     */
-    public function setAmount($amount)
+    public function setAmount(int $amount)
     {
         $this->amount = $amount;
     }
 
-    /**
-     * @return int
-     */
-    public function getAmount()
+    public function getAmount(): int
     {
         return $this->amount;
     }
 
-    /**
-     * @param string $currency
-     */
-    public function setCurrency($currency)
+    public function setCurrency(string $currency)
     {
         $this->currency = $currency;
     }
 
-    /**
-     * @return string
-     */
-    public function getCurrency()
+    public function getCurrency(): string
     {
         return $this->currency;
     }
 
-    /**
-     * @param string $arrivalDate
-     */
-    public function setArrivalDate($arrivalDate)
+    public function setArrivalDate(string $arrivalDate)
     {
         $this->arrival_date = $arrivalDate;
     }
 
-    /**
-     * @return string
-     */
-    public function getArrivalDate()
+    public function getArrivalDate(): string
     {
         return $this->arrival_date;
     }
 
-    /**
-     * @param Creditor $creditor
-     */
-    public function setCreditor($creditor)
+    public function setCreditor(Creditor $creditor)
     {
         $this->creditor = $creditor;
     }
 
-    /**
-     * @return Creditor
-     */
-    public function getCreditor()
+    public function getCreditor(): Creditor
     {
         return $this->creditor;
     }
 
-    /**
-     * @param CreditorBankAccount $creditorBankAccount
-     */
-    public function setCreditorBankAccount($creditorBankAccount)
+    public function setCreditorBankAccount(CreditorBankAccount $creditorBankAccount)
     {
         $this->creditor_bank_account = $creditorBankAccount;
     }
 
-    /**
-     * @return CreditorBankAccount
-     */
-    public function getCreditorBankAccount()
+    public function getCreditorBankAccount(): CreditorBankAccount
     {
         return $this->creditor_bank_account;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         $arr = parent::toArray();
 
-        if (array_key_exists('creditor', $arr)) {
+        if (\array_key_exists('creditor', $arr)) {
             unset($arr['creditor']);
         }
 
@@ -205,7 +151,7 @@ class Payout extends Model
             $arr['links']['creditor'] = $this->getCreditor()->getId();
         }
 
-        if (array_key_exists('creditor_bank_account', $arr)) {
+        if (\array_key_exists('creditor_bank_account', $arr)) {
             unset($arr['creditor_bank_account']);
         }
 

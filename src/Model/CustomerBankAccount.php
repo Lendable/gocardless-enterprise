@@ -39,14 +39,11 @@ class CustomerBankAccount extends Model
      */
     protected $mandates;
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         $arr = parent::toArray();
 
-        if (array_key_exists('customer', $arr)) {
+        if (\array_key_exists('customer', $arr)) {
             unset($arr['customer']);
         }
 
@@ -54,106 +51,69 @@ class CustomerBankAccount extends Model
             $arr['links']['customer'] = $this->getCustomer()->getId();
         }
 
-        if (array_key_exists('mandates', $arr)) {
+        if (\array_key_exists('mandates', $arr)) {
             unset($arr['mandates']);
         }
-
 
         return $arr;
     }
 
-    /**
-     * @param string $accountHolderName
-     */
-    public function setAccountHolderName($accountHolderName)
+    public function setAccountHolderName(string $accountHolderName)
     {
         $this->account_holder_name = $accountHolderName;
     }
 
-    /**
-     * @return string
-     */
-    public function getAccountHolderName()
+    public function getAccountHolderName(): string
     {
         return $this->account_holder_name;
     }
 
-    /**
-     * @param string $accountNumber
-     */
-    public function setAccountNumber($accountNumber)
+    public function setAccountNumber(string $accountNumber)
     {
         $this->account_number = $accountNumber;
     }
 
-    /**
-     * @return string
-     */
-    public function getAccountNumber()
+    public function getAccountNumber(): string
     {
         return $this->account_number;
     }
 
-    /**
-     * @param string $countryCode
-     */
-    public function setCountryCode($countryCode)
+    public function setCountryCode(string $countryCode)
     {
         $this->country_code = $countryCode;
     }
 
-    /**
-     * @return string
-     */
-    public function getCountryCode()
+    public function getCountryCode(): string
     {
         return $this->country_code;
     }
 
-    /**
-     * @param string $currency
-     */
-    public function setCurrency($currency)
+    public function setCurrency(string $currency)
     {
         $this->currency = $currency;
     }
 
-    /**
-     * @return string
-     */
-    public function getCurrency()
+    public function getCurrency(): string
     {
         return $this->currency;
     }
 
-    /**
-     * @param Customer $customer
-     */
     public function setCustomer(Customer $customer)
     {
         $this->customer = $customer;
     }
 
-    /**
-     * @return Customer
-     */
-    public function getCustomer()
+    public function getCustomer(): Customer
     {
         return $this->customer;
     }
 
-    /**
-     * @param string $branchCode
-     */
-    public function setBranchCode($branchCode)
+    public function setBranchCode(string $branchCode)
     {
         $this->branch_code = $branchCode;
     }
 
-    /**
-     * @return string
-     */
-    public function getBranchCode()
+    public function getBranchCode(): string
     {
         return $this->branch_code;
     }
@@ -169,7 +129,7 @@ class CustomerBankAccount extends Model
     /**
      * @return Mandate[]
      */
-    public function getMandates()
+    public function getMandates(): array
     {
         return $this->mandates;
     }

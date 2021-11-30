@@ -19,69 +19,45 @@ class Model
      */
     protected $links = [];
 
-    /**
-     * @param string $id
-     */
-    public function setId($id)
+    public function setId(string $id)
     {
         $this->id = $id;
     }
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @param string $createdAt
-     */
-    public function setCreatedAt($createdAt)
+    public function setCreatedAt(string $createdAt)
     {
         $this->created_at = $createdAt;
     }
 
-    /**
-     * @return string
-     */
-    public function getCreatedAt()
+    public function getCreatedAt(): string
     {
         return $this->created_at;
     }
 
-    /**
-     * @param array $links
-     */
-    public function setLinks($links)
+    public function setLinks(array $links)
     {
         $this->links = $links;
     }
 
-    /**
-     * @return array
-     */
-    public function getLinks()
+    public function getLinks(): array
     {
         return $this->links;
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
-        return array_filter(get_object_vars($this));
+        return \array_filter(\get_object_vars($this));
     }
 
-    /**
-     * @param array $data
-     */
-    public function fromArray($data)
+    public function fromArray(array $data): void
     {
         foreach ($data as $property => $value) {
-            if (property_exists($this, $property)) {
+            if (\property_exists($this, $property)) {
                 $this->{$property} = $value;
             }
         }

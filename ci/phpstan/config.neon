@@ -1,0 +1,15 @@
+includes:
+    - baseline.neon
+    - ../../vendor/phpstan/phpstan-phpunit/extension.neon
+
+parameters:
+    level: max
+    paths:
+        - ../../src
+        - ../../tests
+
+    checkMissingIterableValueType: false
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        - '#Method Lendable\\GoCardlessEnterprise\\Model\\(.+)\(\) has no return type specified#'
+        - '#Method Lendable\\GoCardlessEnterprise\\Tests\\(.+)\(\) has no return type specified#'

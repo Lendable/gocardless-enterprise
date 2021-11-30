@@ -2,6 +2,8 @@
 
 namespace Lendable\GoCardlessEnterprise;
 
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Exception\BadResponseException;
 use Lendable\GoCardlessEnterprise\Exceptions\ApiException;
 use Lendable\GoCardlessEnterprise\Exceptions\IdempotentCreationConflictException;
 use Lendable\GoCardlessEnterprise\Model\Creditor;
@@ -12,52 +14,37 @@ use Lendable\GoCardlessEnterprise\Model\Mandate;
 use Lendable\GoCardlessEnterprise\Model\Model;
 use Lendable\GoCardlessEnterprise\Model\Payment;
 use Lendable\GoCardlessEnterprise\Model\Payout;
-use GuzzleHttp\Client as GuzzleClient;
-use GuzzleHttp\Exception\BadResponseException;
 use Psr\Http\Message\ResponseInterface;
 
 class Client
 {
-    /**
-     * @var GuzzleClient
-     */
-    protected $client;
+    private const ENDPOINT_CUSTOMER = 'customers';
+
+    private const ENDPOINT_CUSTOMER_BANK = 'customer_bank_accounts';
+
+    private const ENDPOINT_MANDATE = 'mandates';
+
+    private const ENDPOINT_MANDATE_PDF = 'mandate_pdfs';
+
+    private const ENDPOINT_PAYMENTS = 'payments';
+
+    private const ENDPOINT_CREDITORS = 'creditors';
+
+    private const ENDPOINT_CREDITOR_BANK = 'creditor_bank_accounts';
+
+    private const ENDPOINT_PAYOUT = 'payouts';
+
+    private GuzzleClient $client;
+
+    private string $baseUrl;
+
+    private string $secret;
+
+    private array $defaultHeaders;
 
     /**
-     * @var string
-     */
-    protected $baseUrl;
-
-    /**
-     * @var string
-     */
-    protected $secret;
-
-    /**
-     * @var array
-     */
-    protected $defaultHeaders;
-
-    const ENDPOINT_CUSTOMER = 'customers';
-
-    const ENDPOINT_CUSTOMER_BANK = 'customer_bank_accounts';
-
-    const ENDPOINT_MANDATE = 'mandates';
-
-    const ENDPOINT_MANDATE_PDF = 'mandate_pdfs';
-
-    const ENDPOINT_PAYMENTS = 'payments';
-
-    const ENDPOINT_CREDITORS = 'creditors';
-
-    const ENDPOINT_CREDITOR_BANK = 'creditor_bank_accounts';
-
-    const ENDPOINT_PAYOUT = 'payouts';
-
-    /**
-     * @param GuzzleClient $client
      * @param array $config
-     * ["baseUrl" => ?, "gocardlessVersion" => ?, "webhook_secret" => ?, "token" => ?]
+     *                      ["baseUrl" => ?, "gocardlessVersion" => ?, "webhook_secret" => ?, "token" => ?]
      */
     public function __construct(GuzzleClient $client, array $config)
     {
@@ -66,25 +53,16 @@ class Client
         $this->secret = $config['webhook_secret'];
         $this->defaultHeaders = [
             'GoCardless-Version' => $config['gocardlessVersion'],
-            'Authorization' => sprintf('Bearer %s', $config['token']),
+            'Authorization' => \sprintf('Bearer %s', $config['token']),
         ];
     }
 
-    /**
-     * @param string $content
-     * @param string $signature
-     * @return bool
-     */
-    protected function validateWebhook($content, $signature)
+    protected function validateWebhook(string $content, string $signature): bool
     {
-        return hash_equals(hash_hmac('sha256', $content, $this->secret), $signature);
+        return \hash_equals(\hash_hmac('sha256', $content, $this->secret), $signature);
     }
 
-    /**
-     * @param Customer $customer
-     * @return Customer
-     */
-    public function createCustomer(Customer $customer)
+    public function createCustomer(Customer $customer): Customer
     {
         $response = $this->post(self::ENDPOINT_CUSTOMER, $customer->toArray());
         $customer->fromArray($response);
@@ -92,12 +70,7 @@ class Client
         return $customer;
     }
 
-    /**
-     * @param string $id
-     * @param Customer|null $customer
-     * @return Customer
-     */
-    public function getCustomer($id, Customer $customer = null)
+    public function getCustomer(string $id, Customer $customer = null): Customer
     {
         $customer = null === $customer ? new Customer() : $customer;
         $customer->fromArray($this->get(self::ENDPOINT_CUSTOMER, [], $id));
@@ -105,28 +78,16 @@ class Client
         return $customer;
     }
 
-    /**
-     * @param int $limit
-     * @param string|null $after
-     * @param string|null $before
-     * @param Customer|null $customer
-     * @return array
-     */
-    public function listCustomers($limit = 50, $after = null, $before = null, Customer $customer = null)
+    public function listCustomers(int $limit = 50, ?string $after = null, ?string $before = null, ?Customer $customer = null): array
     {
         $customer = null === $customer ? new Customer() : $customer;
-        $parameters = array_filter(['after' => $after, 'before' => $before, 'limit' => $limit]);
+        $parameters = \array_filter(['after' => $after, 'before' => $before, 'limit' => $limit]);
         $response = $this->get(self::ENDPOINT_CUSTOMER, $parameters);
-        $customers = $this->responseToObjects($customer, $response);
 
-        return $customers;
+        return $this->responseToObjects($customer, $response);
     }
 
-    /**
-     * @param CustomerBankAccount $account
-     * @return CustomerBankAccount
-     */
-    public function createCustomerBankAccount(CustomerBankAccount $account)
+    public function createCustomerBankAccount(CustomerBankAccount $account): CustomerBankAccount
     {
         $response = $this->post(self::ENDPOINT_CUSTOMER_BANK, $account->toArray());
         $account->fromArray($response);
@@ -134,12 +95,7 @@ class Client
         return $account;
     }
 
-    /**
-     * @param string $id
-     * @param CustomerBankAccount|null $customerBankAccount
-     * @return CustomerBankAccount
-     */
-    public function getCustomerBankAccount($id, CustomerBankAccount $customerBankAccount = null)
+    public function getCustomerBankAccount(string $id, CustomerBankAccount $customerBankAccount = null): CustomerBankAccount
     {
         $account = null === $customerBankAccount ? new CustomerBankAccount() : $customerBankAccount;
         $account->fromArray($this->get(self::ENDPOINT_CUSTOMER_BANK, [], $id));
@@ -147,29 +103,17 @@ class Client
         return $account;
     }
 
-    /**
-     * @param int $limit
-     * @param string|null $after
-     * @param string|null $before
-     * @param CustomerBankAccount|null $customerBankAccount
-     * @return array
-     */
-    public function listCustomerBankAccounts($limit = 50, $after = null, $before = null, CustomerBankAccount $customerBankAccount = null)
+    public function listCustomerBankAccounts(int $limit = 50, ?string $after = null, ?string $before = null, ?CustomerBankAccount $customerBankAccount = null): array
     {
         $account = null === $customerBankAccount ? new CustomerBankAccount() : $customerBankAccount;
 
-        $parameters = array_filter(['after' => $after, 'before' => $before, 'limit' => $limit]);
+        $parameters = \array_filter(['after' => $after, 'before' => $before, 'limit' => $limit]);
         $response = $this->get(self::ENDPOINT_CUSTOMER_BANK, $parameters);
-        $accounts = $this->responseToObjects($account, $response);
 
-        return $accounts;
+        return $this->responseToObjects($account, $response);
     }
 
-    /**
-     * @param Mandate $mandate
-     * @return Mandate
-     */
-    public function createMandate(Mandate $mandate)
+    public function createMandate(Mandate $mandate): Mandate
     {
         $response = $this->post(self::ENDPOINT_MANDATE, $mandate->toArray());
         $mandate->fromArray($response);
@@ -177,12 +121,7 @@ class Client
         return $mandate;
     }
 
-    /**
-     * @param string $id
-     * @param Mandate|null $mandate
-     * @return Mandate
-     */
-    public function getMandate($id, Mandate $mandate = null)
+    public function getMandate(string $id, Mandate $mandate = null): Mandate
     {
         $mandate = null === $mandate ? new Mandate() : $mandate;
         $mandate->fromArray($this->get(self::ENDPOINT_MANDATE, [], $id));
@@ -191,24 +130,22 @@ class Client
     }
 
     /**
-     * @param string $id
-     * @return string
      * @throws \RuntimeException
      * @throws ApiException
      */
-    public function getMandatePdf($id)
+    public function getMandatePdf(string $id): string
     {
         try {
             $body = ['links' => ['mandate' => $id]];
             $response = $this->post(self::ENDPOINT_MANDATE_PDF, $body);
 
-            if (!array_key_exists('url', $response)) {
+            if (!\array_key_exists('url', $response)) {
                 return '';
             }
 
-            $contents = file_get_contents($response['url']);
+            $contents = \file_get_contents($response['url']);
             if ($contents === false) {
-                throw new \RuntimeException(sprintf('Cannot read the file contents of %s', $response['url']));
+                throw new \RuntimeException(\sprintf('Cannot read the file contents of %s', $response['url']));
             }
 
             return $contents;
@@ -217,29 +154,19 @@ class Client
         }
     }
 
-    /**
-     * @param int $limit
-     * @param string|null $after
-     * @param string|null $before
-     * @param Mandate|null $mandate
-     * @return array
-     */
-    public function listMandates($limit = 50, $after = null, $before = null, Mandate $mandate = null)
+    public function listMandates(int $limit = 50, ?string $after = null, ?string $before = null, ?Mandate $mandate = null): array
     {
         $mandate = null === $mandate ? new Mandate() : $mandate;
-        $parameters = array_filter(['after' => $after, 'before' => $before, 'limit' => $limit]);
+        $parameters = \array_filter(['after' => $after, 'before' => $before, 'limit' => $limit]);
         $response = $this->get(self::ENDPOINT_MANDATE, $parameters);
-        $mandates = $this->responseToObjects($mandate, $response);
 
-        return $mandates;
+        return $this->responseToObjects($mandate, $response);
     }
 
     /**
-     * @param Mandate $mandate
-     * @return Mandate
      * @throws \RuntimeException
      */
-    public function cancelMandate(Mandate $mandate)
+    public function cancelMandate(Mandate $mandate): Mandate
     {
         try {
             $body = '{"data":{}}';
@@ -250,13 +177,13 @@ class Client
                 'POST',
                 $this->makeUrl($endpoint, $path),
                 [
-                    'headers' => array_merge($this->defaultHeaders, ['Content-Type' => 'application/vnd.api+json']),
-                    'body' => $body
+                    'headers' => \array_merge($this->defaultHeaders, ['Content-Type' => 'application/vnd.api+json']),
+                    'body' => $body,
                 ]
             );
-            $responseArray = json_decode((string) $response->getBody(), true);
+            $responseArray = \json_decode((string) $response->getBody(), true);
 
-            if (!isset($responseArray[$endpoint])) {
+            if (!isset($responseArray[$endpoint]) || !\is_array($responseArray[$endpoint])) {
                 throw new \RuntimeException('Malformed API response');
             }
 
@@ -268,12 +195,7 @@ class Client
         }
     }
 
-    /**
-     * @param Payment $payment
-     * @param string|null $idempotencyKey
-     * @return Payment
-     */
-    public function createPayment(Payment $payment, $idempotencyKey = null)
+    public function createPayment(Payment $payment, ?string $idempotencyKey = null): Payment
     {
         $response = $this->post(
             self::ENDPOINT_PAYMENTS,
@@ -287,11 +209,7 @@ class Client
         return $payment;
     }
 
-    /**
-     * @param Payment $payment
-     * @return Payment
-     */
-    public function cancelPayment(Payment $payment)
+    public function cancelPayment(Payment $payment): Payment
     {
         $path = $payment->getId().'/actions/cancel';
         $payment->fromArray($this->post(self::ENDPOINT_PAYMENTS, [], $path));
@@ -299,12 +217,7 @@ class Client
         return $payment;
     }
 
-    /**
-     * @param string $id
-     * @param Payment|null $payment
-     * @return Payment
-     */
-    public function getPayment($id, Payment $payment = null)
+    public function getPayment(string $id, Payment $payment = null): Payment
     {
         $payment = null === $payment ? new Payment() : $payment;
         $payment->fromArray($this->get(self::ENDPOINT_PAYMENTS, [], $id));
@@ -313,49 +226,32 @@ class Client
     }
 
     /**
-     * @param int $limit
-     * @param string|null $after
-     * @param string|null $before
-     * @param array $options
-     * @param Payment|null $payment
      * @return Payment[]
      */
-    public function listPayments($limit = 50, $after = null, $before = null, array $options = [], Payment $payment = null)
+    public function listPayments(int $limit = 50, ?string $after = null, ?string $before = null, array $options = [], Payment $payment = null): array
     {
         $payment = null === $payment ? new Payment() : $payment;
-        $parameters = array_filter(['after' => $after, 'before' => $before, 'limit' => $limit]);
+        $parameters = \array_filter(['after' => $after, 'before' => $before, 'limit' => $limit]);
 
-        $parameters = array_merge($parameters, $options);
+        $parameters = \array_merge($parameters, $options);
 
         $response = $this->get(self::ENDPOINT_PAYMENTS, $parameters);
-        /** @var Payment[] $payments */
-        $payments = $this->responseToObjects($payment, $response);
 
-        return $payments;
+        return $this->responseToObjects($payment, $response);
     }
 
     /**
-     * @param int $limit
-     * @param string|null $after
-     * @param string|null $before
      * @return Creditor[]
      */
-    public function listCreditors($limit = 50, $after = null, $before = null)
+    public function listCreditors(int $limit = 50, ?string $after = null, ?string $before = null): array
     {
-        $parameters = array_filter(['after' => $after, 'before' => $before, 'limit' => $limit]);
+        $parameters = \array_filter(['after' => $after, 'before' => $before, 'limit' => $limit]);
         $response = $this->get(self::ENDPOINT_CREDITORS, $parameters);
-        /** @var Creditor[] $creditors */
-        $creditors = $this->responseToObjects(new Creditor(), $response);
 
-        return $creditors;
+        return $this->responseToObjects(new Creditor(), $response);
     }
 
-    /**
-     * @param string $id
-     * @param Creditor|null $creditor
-     * @return Creditor
-     */
-    public function getCreditor($id, Creditor $creditor = null)
+    public function getCreditor(string $id, Creditor $creditor = null): Creditor
     {
         $creditor = null === $creditor ? new Creditor() : $creditor;
         $creditor->fromArray($this->get(self::ENDPOINT_CREDITORS, [], $id));
@@ -363,16 +259,11 @@ class Client
         return $creditor;
     }
 
-    /**
-     * @param CreditorBankAccount $account
-     * @param bool $setAsDefault
-     * @return CreditorBankAccount
-     */
-    public function createCreditorBankAccount(CreditorBankAccount $account, $setAsDefault = false)
+    public function createCreditorBankAccount(CreditorBankAccount $account, bool $setAsDefault = false): CreditorBankAccount
     {
         $data = $this->post(
             self::ENDPOINT_CREDITOR_BANK,
-            array_merge_recursive(['set_as_default_payout_account' => $setAsDefault], $account->toArray())
+            \array_merge_recursive(['set_as_default_payout_account' => $setAsDefault], $account->toArray())
         );
 
         $account->fromArray($data);
@@ -380,12 +271,7 @@ class Client
         return $account;
     }
 
-    /**
-     * @param string $id
-     * @param Payout|null $payout
-     * @return Payout
-     */
-    public function getPayout($id, Payout $payout = null)
+    public function getPayout(string $id, Payout $payout = null): Payout
     {
         $payout = null === $payout ? new Payout() : $payout;
         $payout->fromArray($this->get(self::ENDPOINT_PAYOUT, [], $id));
@@ -394,35 +280,26 @@ class Client
     }
 
     /**
-     * @param int $limit
-     * @param string|null $after
-     * @param string|null $before
-     * @param array $options
-     * @param Payout|null $payout
      * @return Payout[]
      */
-    public function listPayouts($limit = 50, $after = null, $before = null, array $options = [], Payout $payout = null)
+    public function listPayouts(int $limit = 50, ?string $after = null, ?string $before = null, array $options = [], Payout $payout = null): array
     {
         $payout = null === $payout ? new Payout() : $payout;
-        $parameters = array_filter(['after' => $after, 'before' => $before, 'limit' => $limit]);
+        $parameters = \array_filter(['after' => $after, 'before' => $before, 'limit' => $limit]);
 
-        $parameters = array_merge($parameters, $options);
+        $parameters = \array_merge($parameters, $options);
 
         $response = $this->get(self::ENDPOINT_PAYOUT, $parameters);
-        /** @var Payout[] $payouts */
-        $payouts = $this->responseToObjects($payout, $response);
 
-        return $payouts;
+        return $this->responseToObjects($payout, $response);
     }
 
     /**
-     * @param Model $example
-     * @param array $response
      * @return Model[]
      */
-    protected function responseToObjects(Model $example, $response)
+    protected function responseToObjects(Model $example, array $response): array
     {
-        $objects = array_map(function ($data) use ($example) {
+        $objects = \array_map(static function ($data) use ($example) {
             $object = clone $example;
             $object->fromArray($data);
 
@@ -432,28 +309,18 @@ class Client
         return $objects;
     }
 
-    /**
-     * @param string $endpoint
-     * @param string|null $path
-     * @return string
-     */
-    protected function makeUrl($endpoint, $path = null)
+    protected function makeUrl(string $endpoint, ?string $path = null): string
     {
-        return $this->baseUrl.$endpoint.(is_string($path) ? '/'.$path : '');
+        return $this->baseUrl.$endpoint.(\is_string($path) ? '/'.$path : '');
     }
 
     /**
-     * @param string $endpoint
-     * @param array $body
-     * @param string|null $path
-     * @param string|null $idempotencyKey
-     * @return array
      * @throws \RuntimeException
      * @throws ApiException
      */
-    protected function post($endpoint, array $body, $path = null, $idempotencyKey = null)
+    protected function post(string $endpoint, array $body, ?string $path = null, ?string $idempotencyKey = null): array
     {
-        $headers = array_merge($this->defaultHeaders, ['Content-Type' => 'application/vnd.api+json']);
+        $headers = \array_merge($this->defaultHeaders, ['Content-Type' => 'application/vnd.api+json']);
 
         if ($idempotencyKey !== null) {
             $headers['Idempotency-Key'] = $idempotencyKey;
@@ -465,10 +332,10 @@ class Client
                 $this->makeUrl($endpoint, $path),
                 [
                     'headers' => $headers,
-                    'body' => json_encode([$endpoint => $body])
+                    'body' => \json_encode([$endpoint => $body]),
                 ]
             );
-            $responseArray = json_decode((string) $response->getBody(), true);
+            $responseArray = \json_decode((string) $response->getBody(), true);
 
             if (!isset($responseArray[$endpoint])) {
                 throw new \RuntimeException('Malformed API response');
@@ -484,15 +351,11 @@ class Client
         }
     }
 
-    /**
-     * @param BadResponseException $exception
-     * @return bool
-     */
-    private function isIdempotentCreationConflict(BadResponseException $exception)
+    private function isIdempotentCreationConflict(BadResponseException $exception): bool
     {
         $response = $exception->getResponse();
-        assert($response instanceof ResponseInterface);
-        $responseArray = json_decode((string) $response->getBody(), true);
+        \assert($response instanceof ResponseInterface);
+        $responseArray = \json_decode((string) $response->getBody(), true);
 
         if (!isset($responseArray['error']['errors'])) {
             return false;
@@ -500,7 +363,7 @@ class Client
 
         $errors = $responseArray['error']['errors'];
 
-        if (!is_array($errors)) {
+        if (!\is_array($errors)) {
             return false;
         }
 
@@ -514,22 +377,18 @@ class Client
     }
 
     /**
-     * @param string $endpoint
-     * @param array $parameters
-     * @param string|null $path
      * @throws \RuntimeException
      * @throws ApiException
-     * @return array
      */
-    protected function get($endpoint, array $parameters = [], $path = null)
+    protected function get(string $endpoint, array $parameters = [], ?string $path = null): array
     {
         try {
             $response = $this->client->request(
                 'GET',
                 $this->makeUrl($endpoint, $path),
-                array_merge(['headers' => $this->defaultHeaders], ['query' => $parameters])
+                \array_merge(['headers' => $this->defaultHeaders], ['query' => $parameters])
             );
-            $responseArray = json_decode((string) $response->getBody(), true);
+            $responseArray = \json_decode((string) $response->getBody(), true);
 
             if (!isset($responseArray[$endpoint])) {
                 throw new \RuntimeException('Malformed API response');

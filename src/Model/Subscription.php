@@ -47,7 +47,7 @@ class Subscription extends Model
     /**
      * @param int $amount Amount must be in whole pence/cents
      */
-    public function setAmount($amount)
+    public function setAmount(int $amount)
     {
         $this->amount = $amount;
     }
@@ -55,119 +55,79 @@ class Subscription extends Model
     /**
      * @return int Amount is in whole pence/cents
      */
-    public function getAmount()
+    public function getAmount(): int
     {
         return $this->amount;
     }
 
-    /**
-     * @param string $currency
-     */
-    public function setCurrency($currency)
+    public function setCurrency(string $currency)
     {
         $this->currency = $currency;
     }
 
-    /**
-     * @return string
-     */
-    public function getCurrency()
+    public function getCurrency(): string
     {
         return $this->currency;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $intervalUnit
-     */
-    public function setIntervalUnit($intervalUnit)
+    public function setIntervalUnit(string $intervalUnit)
     {
         $this->interval_unit = $intervalUnit;
     }
 
-    /**
-     * @return string
-     */
-    public function getIntervalUnit()
+    public function getIntervalUnit(): string
     {
         return $this->interval_unit;
     }
 
-    /**
-     * @param int $dayOfMonth
-     */
-    public function setDayOfMonth($dayOfMonth)
+    public function setDayOfMonth(int $dayOfMonth)
     {
         $this->day_of_month = $dayOfMonth;
     }
 
-    /**
-     * @return int
-     */
-    public function getDayOfMonth()
+    public function getDayOfMonth(): int
     {
         return $this->day_of_month;
     }
 
-    /**
-     * @param Mandate $mandate
-     */
     public function setMandate(Mandate $mandate)
     {
         $this->mandate = $mandate;
     }
 
-    /**
-     * @return Mandate
-     */
-    public function getMandate()
+    public function getMandate(): Mandate
     {
         return $this->mandate;
     }
 
-    /**
-     * @param int $count
-     */
-    public function setCount($count)
+    public function setCount(int $count)
     {
         $this->count = $count;
     }
 
-    /**
-     * @return int
-     */
-    public function getCount()
+    public function getCount(): int
     {
         return $this->count;
     }
 
     /**
-     * @param string $key
-     * @param mixed $value Must be stringifiable
+     * @param float|int|object|string|null $value Must be stringifiable
      */
-    public function addMetadata($key, $value)
+    public function addMetadata(string $key, $value)
     {
         $this->metadata[$key] = (string) $value;
     }
 
-    /**
-     * @param array $metadata
-     */
     public function setMetadata(array $metadata)
     {
         foreach ($metadata as $k => $v) {
@@ -176,22 +136,16 @@ class Subscription extends Model
         $this->metadata = $metadata;
     }
 
-    /**
-     * @return array
-     */
-    public function getMetadata()
+    public function getMetadata(): array
     {
         return $this->metadata;
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         $arr = parent::toArray();
 
-        if (array_key_exists('mandate', $arr)) {
+        if (\array_key_exists('mandate', $arr)) {
             unset($arr['mandate']);
         }
 

@@ -52,7 +52,7 @@ class Payment extends Model
     /**
      * @param int $amount Amount must be in whole pence/cents
      */
-    public function setAmount($amount)
+    public function setAmount(int $amount)
     {
         $this->amount = $amount;
     }
@@ -60,87 +60,57 @@ class Payment extends Model
     /**
      * @return int Amount is in whole pence/cents
      */
-    public function getAmount()
+    public function getAmount(): int
     {
         return $this->amount;
     }
 
-    /**
-     * @param string $currency
-     */
-    public function setCurrency($currency)
+    public function setCurrency(string $currency)
     {
         $this->currency = $currency;
     }
 
-    /**
-     * @return string
-     */
-    public function getCurrency()
+    public function getCurrency(): string
     {
         return $this->currency;
     }
 
-    /**
-     * @param string $description
-     */
-    public function setDescription($description)
+    public function setDescription(string $description)
     {
         $this->description = $description;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param Mandate $mandate
-     */
     public function setMandate(Mandate $mandate)
     {
         $this->mandate = $mandate;
     }
 
-    /**
-     * @return Mandate
-     */
-    public function getMandate()
+    public function getMandate(): Mandate
     {
         return $this->mandate;
     }
 
-    /**
-     * @param string $chargeDate
-     */
-    public function setCollectedAt($chargeDate)
+    public function setCollectedAt(string $chargeDate)
     {
         $this->charge_date = $chargeDate;
     }
 
-    /**
-     * @return string
-     */
-    public function getChargeDate()
+    public function getChargeDate(): string
     {
         return $this->charge_date;
     }
 
-    /**
-     * @param string $status
-     */
-    public function setStatus($status)
+    public function setStatus(string $status)
     {
         $this->status = $status;
     }
 
-    /**
-     * @return string
-     */
-    public function getStatus()
+    public function getStatus(): string
     {
         return $this->status;
     }
@@ -148,23 +118,19 @@ class Payment extends Model
     /**
      * @param int $transactionFee Amount must be in whole pence/cents
      */
-    public function setTransactionFee($transactionFee)
+    public function setTransactionFee(int $transactionFee)
     {
         $this->transaction_fee = $transactionFee;
     }
 
     /**
-     * @param string $key
-     * @param mixed $value
+     * @param float|int|object|string|null $value Must be stringifiable
      */
-    public function addMetadata($key, $value)
+    public function addMetadata(string $key, $value)
     {
         $this->metadata[$key] = (string) $value;
     }
 
-    /**
-     * @param array $metadata
-     */
     public function setMetadata(array $metadata)
     {
         foreach ($metadata as $k => $v) {
@@ -173,26 +139,17 @@ class Payment extends Model
         $this->metadata = $metadata;
     }
 
-    /**
-     * @return array
-     */
-    public function getMetadata()
+    public function getMetadata(): array
     {
         return $this->metadata;
     }
 
-    /**
-     * @return string
-     */
-    public function getReference()
+    public function getReference(): string
     {
         return $this->reference;
     }
 
-    /**
-     * @param string $reference
-     */
-    public function setReference($reference)
+    public function setReference(string $reference)
     {
         $this->reference = $reference;
     }
@@ -200,19 +157,16 @@ class Payment extends Model
     /**
      * @return int Amount is in whole pence/cents
      */
-    public function getTransactionFee()
+    public function getTransactionFee(): int
     {
         return $this->transaction_fee;
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         $arr = parent::toArray();
 
-        if (array_key_exists('mandate', $arr)) {
+        if (\array_key_exists('mandate', $arr)) {
             unset($arr['mandate']);
         }
 
