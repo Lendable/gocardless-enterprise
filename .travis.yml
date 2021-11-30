@@ -7,16 +7,12 @@ cache:
     - $HOME/.composer/cache
     
 php:
-  - 5.6
-  - 7.0
-  - 7.1
-  - 7.2
-  - 7.3
   - 7.4
+  - 8.0
 
 env:
   global:
-    - OLD_PHP_VERSION="7.2"
+    - OLD_PHP_VERSION="8.0"
     - XDEBUG_MODE="coverage"
   matrix:
     - DEPENDENCIES="beta"
@@ -44,10 +40,6 @@ before_install:
     export -f version
 
 install:
-  - if [ "$(version "$(phpenv version-name)")" -lt "$(version "$OLD_PHP_VERSION")" ]; then
-      composer remove friendsofphp/php-cs-fixer phpstan/phpstan phpstan/phpstan-phpunit phpunit/phpunit --dev;
-      composer require phpunit/phpunit "5.7.*" --dev;
-    fi
   - if [ "$DEPENDENCIES" = "beta" ]; then
       composer config minimum-stability beta;
       composer update -n --prefer-dist;
@@ -59,14 +51,9 @@ install:
 
 script:
   - if [ "$(version "$(phpenv version-name)")" -lt "$(version "$OLD_PHP_VERSION")" ]; then
-      echo "File validation is skipped for older PHP versions";
-    else
-      composer validate-files;
-    fi;
-  - if [ "$(version "$(phpenv version-name)")" -lt "$(version "$OLD_PHP_VERSION")" ]; then
       echo "Static analysis is skipped for older PHP versions";
     else
-      composer run-static-analysis-including-tests;
+      composer run-static-analysis;
     fi;
   - if [ "$(version "$(phpenv version-name)")" -lt "$(version "$OLD_PHP_VERSION")" ]; then
       echo "Code style check is skipped for older PHP versions";
