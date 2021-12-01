@@ -1,4 +1,6 @@
-[![Build Status](https://api.travis-ci.org/Lendable/gocardless-enterprise.svg)](https://travis-ci.org/Lendable/gocardless-enterprise)
+# ABANDONED
+We recommend that the official package from Gocardless is used: https://packagist.org/packages/gocardless/gocardless-pro
+___
 
 # Unofficial integration with GoCardless Enterprise API
 Client library for the GoCardless Enterprise API
